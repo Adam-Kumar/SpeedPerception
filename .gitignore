@@ -1,0 +1,28 @@
+﻿# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large media files (GitHub has a strict 100MB file limit)
+# Note: mapping_lap_video_fixed.mp4 is 2.7 GB
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Temporary / Scratch files
+scratch/
+.tempmediaStorage/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Environment / local configs
+.env
+venv/
+env/
+ENV/
