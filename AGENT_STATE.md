@@ -14,6 +14,16 @@
 
 ---
 
+
+## 1.1 GitHub Remote Repository
+* **Remote URL:** `https://github.com/Adam-Kumar/SpeedPerception.git`
+* **Default Branch:** `main`
+* **Clone Command for Other Machines:**
+  ```bash
+  git clone https://github.com/Adam-Kumar/SpeedPerception.git
+  ```
+* **Note on Large Media:** `route_mapping/mapping_lap_video_fixed.mp4` (2.7 GB) is excluded from git via `.gitignore` due to GitHub's 100 MB per-file upload limit. Transfer the MP4 separately (e.g. via OneDrive/USB) if visual reference playback is needed on the second machine. All code and CSV route datasets are version-controlled in the repository.
+
 ## 2. Directory Structure
 
 ```text
