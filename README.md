@@ -1,6 +1,6 @@
 # Predictive Modeling of Speed Misperception and Mitigation Utilizing Dynamic AR Peripheral Cues
 
-A driving simulation research project investigating human speed misperception across varied road environments without a speedometer, and evaluating subconscious mitigation using dynamic Augmented Reality (AR) peripheral visual cues.
+Investigating human speed misperception across varied road environments without a speedometer, and evaluating subconscious mitigation using dynamic Augmented Reality (AR) peripheral visual cues.
 
 ---
 
@@ -8,9 +8,9 @@ A driving simulation research project investigating human speed misperception ac
 
 * **Objective:**
   1. **Phase 1 (Current Focus):** Quantify how distinct road environments (tunnels, elevated bridges, high-density urban corridors, and open rural expressways) distort human perception of vehicle speed in the absence of a speedometer ($v_{\mathrm{actual}} - v_{\mathrm{target}}$).
-  2. **Phase 2 (Mitigation):** Design and evaluate dynamic peripheral visual cues (e.g., optical flow arrows and peripheral pacing) projected inside a VR headset to subconsciously guide the driver back toward the target speed.
+  2. **Phase 2 (Mitigation):** Design and evaluate dynamic peripheral visual cues (e.g., optical flow arrows and peripheral pacing) planned to be simulated in a driving simulator.
 * **Simulation Platform:** BeamNG.drive (v0.3x+) connected via `beamngpy` at `127.0.0.1:64256`.
-* **Track:** Tokyo Shuto Expressway C1 Loop (20.0 km total course length), fitted with custom barriers, environmental backdrops, and an overhead finish line at 20.0 km.
+* **Track:** Tokyo Shuto Expressway C1 Loop (a cut segment of 20.0 km of total course length), fitted with custom barriers, environmental backdrops, and an overhead finish line at 20.0 km.
 * **Target Baseline Speed:** Constant 80.0 km/h (or zone-specific speed profiles).
 
 ### Environmental Zones (Tokyo C1 Loop)
