@@ -1,0 +1,2 @@
+{"name":"newPrefab","class":"SimGroup","persistentId":"0ff50ad5-dace-4d38-9241-a9e3c0d92b11","__parent":"Prefabs"}
+{"name":"garage_japan_unpacked","class":"SimGroup","persistentId":"53979969-c0ea-4d4d-83cb-a80ead157c9d","__parent":"Prefabs","groupPosition":"0 0 0","prefab_filename":"/levels/c1/prefabs/garage_japan.prefab.json","prefab_loadmode":"auto","prefab_name":"garage_japan","prefab_position":"0.000000 0.000000 0.000000","unpacked_prefab":"1"}

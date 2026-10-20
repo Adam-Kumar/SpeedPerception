@@ -1,0 +1,24 @@
+{"name":"Sky","mapTo":"sky","class":"SimGroup","persistentId":"3bd1010e-7d86-44ea-9058-0c66a0644bd1","__parent":"MissionGroup","translucentBlendOp":"None"}
+{"name":"CameraBookmarks","class":"SimGroup","persistentId":"65ce8b2d-df94-487d-a236-0332252ac1c3","__parent":"MissionGroup"}
+{"name":"PlayerDropPoints","class":"SimGroup","persistentId":"95c6448a-2574-42b8-b199-49248f85e31b","__parent":"MissionGroup","enabled":"1","locked":true}
+{"name":"Tunnel_lights","class":"SimGroup","persistentId":"4be1090b-8002-4b2f-a1f8-be8aee90db21","__parent":"MissionGroup"}
+{"name":"Tunnel_sounds","class":"SimGroup","persistentId":"5a04c96a-7873-49da-bd16-3d6c950ffa91","__parent":"MissionGroup"}
+{"name":"RainbowBridge","class":"SimGroup","persistentId":"ed1fff22-a04b-4f05-8c6c-46b8de88dcee","__parent":"MissionGroup","locked":true}
+{"name":"Zones","class":"SimGroup","persistentId":"0e95e634-1ce6-4683-a048-568d7cf2a885","__parent":"MissionGroup"}
+{"name":"water","class":"SimGroup","persistentId":"b6e4756a-f59b-4c79-a79c-3a680c6ce7f4","__parent":"MissionGroup"}
+{"name":"ck_ai","class":"SimGroup","persistentId":"dc83bdbf-1ee1-4118-adfe-23a1e63e0094","__parent":"MissionGroup"}
+{"name":"trap","class":"SimGroup","persistentId":"aeafcc9f-d6a7-449a-a7cd-3557cc4d77c5","__parent":"MissionGroup"}
+{"name":"sign_lights","class":"SimGroup","persistentId":"e10204a6-b0a8-4a9f-95c8-7053e3c1258e","__parent":"MissionGroup","groupPosition":"0 0 0","locked":true,"prefab_filename":"/levels/c1/prefabs/sign_lights.prefab.json","prefab_loadmode":"auto","prefab_position":"0.000000 0.000000 0.000000","unpacked_prefab":"1"}
+{"name":"streetlamps","class":"SimGroup","persistentId":"1280ed24-b0bc-45f6-8f6e-e7fe1758df0b","__parent":"MissionGroup","groupPosition":"0 0 0","locked":true,"prefab_filename":"/levels/c1/prefabs/streetlamps.prefab.json","prefab_loadmode":"auto","prefab_position":"0.000000 0.000000 0.000000","unpacked_prefab":"1"}
+{"name":"Sounds","class":"SimGroup","persistentId":"131953f6-c025-4a02-9a98-77ebdbab5159","__parent":"MissionGroup"}
+{"name":"bigmap_helper","class":"SimGroup","persistentId":"1c6bc334-59a6-419c-93ff-bd6d241e5527","__parent":"MissionGroup","hidden":true}
+{"name":"ck_rainroad","class":"SimGroup","persistentId":"edf3e3d4-696e-4c8b-a5cf-54f8d21d0062","__parent":"MissionGroup","hidden":true,"locked":true}
+{"name":"Prefabs","class":"SimGroup","persistentId":"ecc30741-88ce-42c7-bdf6-fa71506bc8e8","__parent":"MissionGroup"}
+{"name":"hide_forest","class":"SimGroup","persistentId":"5102a918-2710-4014-80dd-cbb23cea0244","__parent":"MissionGroup","hidden":true}
+{"name":"tunnel_triggers","class":"SimGroup","persistentId":"6d893207-cb3e-4b0e-9617-33797aed8088","__parent":"MissionGroup"}
+{"name":"garage_triggers","class":"SimGroup","persistentId":"60ca467e-1a43-4146-84a7-ea2f38b31e8e","__parent":"MissionGroup"}
+{"name":"waifu_hunter","class":"SimGroup","persistentId":"0ecff237-636b-4509-9779-93ba535aef0c","__parent":"MissionGroup"}
+{"name":"garage_marker","class":"SimGroup","persistentId":"2923b735-c535-48a3-844e-3cc5e12ba32f","__parent":"MissionGroup"}
+{"class":"TSStatic","__parent":"MissionGroup","position":[-5512.47656,-13722.418,886.797058],"isRenderEnabled":false,"rotationMatrix":[0.334926128,0.94224447,0,-0.94224447,0.334926128,0,0,0,1],"scale":[1,4.4332552,1.22912753],"shapeName":"/art/shapes/objects/jerseybarrier_3m.dae","useInstanceRenderData":true}
+{"class":"TSStatic","__parent":"MissionGroup","position":[-7066.56494,-15931.1943,891.332581],"isRenderEnabled":false,"rotationMatrix":[-0.996813536,0.0719394684,-0.0344567262,-0.0711495429,-0.997185588,-0.0236288998,-0.0360596068,-0.021102028,0.999126852],"scale":[1,29.2725048,1.17756009],"shapeName":"/art/shapes/objects/jerseybarrier_3m.dae","useInstanceRenderData":true}
+{"class":"TSStatic","__parent":"MissionGroup","position":[-7478.33252,-16479.3965,861.754883],"isRenderEnabled":false,"rotationMatrix":[-0.504585147,-0.863362074,0,0.863362074,-0.504585147,0,0,0,1],"scale":[1,7.308424,1],"shapeName":"/art/shapes/objects/jerseybarrier_3m.dae","useInstanceRenderData":true}

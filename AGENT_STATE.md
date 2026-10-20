@@ -147,3 +147,8 @@ Sampled at a strict 10Hz synchronized loop during human driving trials:
   * `Rural Expressway`: `#2ed573` (limegreen)
   * `Bridge`: `#e056fd` (magenta)
   * `Urban Road`: `#f1c40f` (gold)
+
+
+### Edited Level Configuration (`c1/`)
+* **Purpose:** Custom BeamNG mission group data, triggers, lighting, decals, and barriers for the Tokyo C1 track.
+* **Deployment on New Machine:** Copy `c1/` into `%LOCALAPPDATA%\BeamNG.drive\<version>\levels\c1\` or inside the level package to replicate course triggers and visual conditions.

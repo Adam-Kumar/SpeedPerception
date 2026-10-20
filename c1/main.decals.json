@@ -1,0 +1,43 @@
+{
+  "header": {
+    "name": "DecalData File",
+    "comments": "// Instances format: rectIdx, size, renderPriority, position.x, position.y, position.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, uid",
+    "version": 2
+  },
+  "instances": {
+    "dirty_ground_missing": [
+      [
+        0,
+        10,
+        0,
+        0.720703602,
+        11.9565735,
+        -0.0146012306,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        1528975232
+      ]
+    ],
+    "water_decal2_missing": [
+      [
+        1,
+        3,
+        0,
+        2.75054932,
+        -15.7042856,
+        -0.0146017075,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        3183803080
+      ]
+    ]
+  }
+}

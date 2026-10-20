@@ -111,3 +111,7 @@ The analysis pipeline outputs:
   3. `control_dynamics_comparison.png` — Throttle hunting and speed variance by zone.
   4. `misperception_proportions.png` — 100% stacked bar chart of perceptual states.
 * **Reports:** `cohort_zone_metrics_summary.csv` and Markdown research summary.
+
+
+### Edited Map Assets (`c1/`)
+The `c1/` folder contains customized BeamNG level mission items, triggers, lighting, and markers for the Tokyo Shuto Expressway C1 loop. When migrating to a new machine, copy these contents into your BeamNG user folder under `levels/c1/` to load the exact experimental course setup.
