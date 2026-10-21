@@ -1,8 +1,8 @@
 {
   "header": {
     "name": "DecalData File",
-    "comments": "// Instances format: rectIdx, size, renderPriority, position.x, position.y, position.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, uid",
-    "version": 2
+    "comments": "// Instances format: rectIdx, size, renderPriority, position.x, position.y, position.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, uid, tiling.x, tiling.y",
+    "version": 3
   },
   "instances": {
     "dirty_ground_missing": [
@@ -19,7 +19,9 @@
         -1,
         0,
         0,
-        1528975232
+        1528975232,
+        0,
+        0
       ]
     ],
     "water_decal2_missing": [
@@ -36,7 +38,9 @@
         -1,
         0,
         0,
-        3183803080
+        3183803080,
+        0,
+        0
       ]
     ]
   }
