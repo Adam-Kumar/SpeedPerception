@@ -59,8 +59,10 @@ Research/
 * **`annotated_route.csv`**: Master spatial reference table containing 4,410 centerline points with `['Timestamp', 'X', 'Y', 'Z', 'Distance_km', 'environment_zone']` plus one-hot binary zone flags (`in_tunnel`, `is_bridge`, etc.). Pre-loaded by testing scripts for sub-millisecond route snapping.
 
 #### `user_study/`
-* **`user_study.py`**: **Active participant experiment runner.** Connects to the participant vehicle in BeamNG, suppresses the in-game HUD/speedometer (`Alt+U`), logs 10Hz telemetry, snaps vehicle position to the nearest route point via KDTree, auto-terminates at the 20.0 km finish line, and saves all participant logs directly inside `user_study/`.
-* **`analyze_participant.py`**: **Post-processing analysis pipeline.** Ingests participant CSVs from `user_study/`, computes zone-by-zone speed errors, variance, and throttle hunting, runs ANOVA statistical tests, and exports publication figures to `user_study/analysis_outputs/`.
+* **`user_study.py`**: **Active participant experiment runner.** Connects to the participant vehicle in BeamNG, suppresses the in-game HUD/speedometer (`Alt+U`), logs 10Hz telemetry, snaps vehicle position to the nearest route point via KDTree, auto-terminates at the 20.0 km finish line, and saves all participant logs directly inside `user_study/results/`.
+* **`analyze_participant.py`**: **Post-processing analysis pipeline.** Automatically ingests participant CSVs from `user_study/results/` and exports 3 focused visualization figures to `user_study/analysis_outputs/`.
+* **`results/`**: Storage directory for all participant telemetry data (`participant_<ID>_data.csv`) and session metadata (`participant_<ID>_meta.json`).
+* **`analysis_outputs/`**: Dedicated directory containing the generated visual figures.
 
 ---
 
@@ -70,9 +72,10 @@ Research/
 Ground-truth centerline mapping and environmental zone classification have been finalized in `route_mapping/annotated_route.csv`.
 
 ### Step 2: Running a Participant Session
-1. Launch BeamNG.drive and load the **Tokyo Expressway C1** map in Freeroam.
-2. Place the participant vehicle at the start line.
-3. In terminal, navigate to `user_study/` (or run directly from root):
+1. Launch BeamNG.drive normally through Steam.
+2. In the main menu, click **Freeroam** and load the **Tokyo Expressway C1** map.
+3. Position your car at the start line, ensure you are in **Cockpit Driver Seat POV** at a normal driving angle, and press **`Alt + U`** to hide the 2D in-game HUD/minimap.
+4. In terminal, navigate to `user_study/` (or run directly from root):
    ```powershell
    cd user_study
 
@@ -85,32 +88,29 @@ Ground-truth centerline mapping and environmental zone classification have been 
    # Optional: Enable simultaneous screen recording on Monitor 2:
    python user_study.py --participant-id P01 --record-video --monitor 2
    ```
-4. The script automatically:
-   * Disables the in-game HUD and speedometer so the driver drives purely by perception.
+5. The script automatically:
+   * Connects to the vehicle's native 10Hz UDP telemetry stream.
    * Prompts the driver through a 5-second countdown.
    * Logs 10Hz telemetry: vehicle coordinates, actual speed, target speed, speed gap, throttle, brake, steering, course distance, and active environmental zone.
-   * Auto-detects the 20.0 km finish line, displays an on-screen completion notice, restores the in-game HUD, and saves `participant_P01_data.csv` and `participant_P01_meta.json` inside `user_study/`.
+   * Auto-detects the 20.0 km finish line, sounds a completion alert, and saves `participant_<ID>_data.csv` and `participant_<ID>_meta.json` into `user_study/results/`.
 
 ### Step 3: Analyzing Participant Data
 Once one or more participant runs have been collected:
 ```powershell
 cd user_study
 
-# Analyze all participant files in user_study/ (default):
+# Automatically analyzes all participant files in results/ (default):
 python analyze_participant.py
 
 # Or analyze a single specific participant file:
-python analyze_participant.py -f participant_P01_data.csv
+python analyze_participant.py -f results/participant_p01_data.csv
 ```
 The analysis pipeline outputs:
-* **Terminal Summary Table:** Mean speed, Speed Gap ($v_{\mathrm{actual}} - v_{\mathrm{target}}$), RMSE, % under-speeding, % over-speeding, and throttle hunting per zone.
-* **Statistical Tests:** One-way ANOVA and Kruskal-Wallis tests across environmental zones.
-* **Publication Figures (`user_study/analysis_outputs/`):**
-  1. `speed_gap_by_zone_boxplot.png` — Speed Gap boxplots across zones with under/over-speeding regions.
-  2. `longitudinal_speed_profile.png` — 20.0 km speed trajectory with color-shaded environmental zones.
-  3. `control_dynamics_comparison.png` — Throttle hunting and speed variance by zone.
-  4. `misperception_proportions.png` — 100% stacked bar chart of perceptual states.
-* **Reports:** `cohort_zone_metrics_summary.csv` and Markdown research summary.
+* **Terminal Summary Table:** Mean speed, Target speed, Speed Gap ($v_{\mathrm{actual}} - v_{\mathrm{target}}$), RMSE, % under-speeding, % over-speeding, and dominant bias per zone.
+* **Focused Publication Figures (`user_study/analysis_outputs/`):**
+  1. `longitudinal_speed_profile.png` — 20.0 km speed trajectory scaled dynamically to the top recorded speed, with color-shaded environmental zones and target speed line.
+  2. `longitudinal_throttle_profile.png` — Dedicated 20.0 km driver throttle input (0–100%) profile with environmental zone shading.
+  3. `speed_gap_by_zone_boxplot.png` — Speed Gap boxplots across zones with under/over-speeding regions and dynamic Y-axis.
 
 
 ### Edited Map Assets (`c1/`)

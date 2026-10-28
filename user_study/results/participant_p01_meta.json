@@ -1,0 +1,10 @@
+{
+    "participant_id": "p01",
+    "session_time": "2026-10-28 17:51:44",
+    "target_speed_kmh": 80.0,
+    "target_profile": null,
+    "points_logged": 2970,
+    "course_distance_logged_km": 19.968,
+    "data_file": "c:\\Users\\xadam\\Documents\\Research\\user_study\\participant_p01_data.csv",
+    "video_file": null
+}

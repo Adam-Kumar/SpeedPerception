@@ -180,7 +180,7 @@ def run_study(
     launch_game: bool = True,
     record_video: bool = False,
     monitor_index: int = 2,
-    finish_dist_threshold_km: float = 19.98,
+    finish_dist_threshold_km: float = 19.995,
     countdown_sec: int = 5
 ):
     """
@@ -194,7 +194,7 @@ def run_study(
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
     if output_dir is None:
-        output_dir = script_dir
+        output_dir = os.path.join(script_dir, 'results')
 
     os.makedirs(output_dir, exist_ok=True)
     out_csv = os.path.join(output_dir, f"participant_{participant_id}_data.csv")
@@ -204,11 +204,10 @@ def run_study(
     # 1. Initialize Route Matcher
     matcher = RouteMatcher(route_csv_path)
 
-    # 2. Check BeamNG directory
-    if launch_game and not os.path.exists(beamng_dir):
-        print(f"[Warning] BeamNG directory '{beamng_dir}' not found.")
-        print("Will attempt to connect to an already running instance...")
-        launch_game = False
+    import socket
+    import struct
+    PACKET_FORMAT = '<11f'
+    PACKET_SIZE = struct.calcsize(PACKET_FORMAT)
 
     print("\n" + "="*70)
     print(f"  PARTICIPANT STUDY SESSION: {participant_id}")
@@ -216,59 +215,41 @@ def run_study(
     print(f"  Output CSV: {out_csv}")
     print("="*70 + "\n")
 
-    print("[BeamNG] Connecting to BeamNG.drive (127.0.0.1:64256)...")
-    bng = BeamNGpy('127.0.0.1', 64256, home=beamng_dir if launch_game else None)
-
+    # Set up UDP socket listener for BeamNG telemetry
+    telemetry_port = 64256
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
-        bng.open(launch=launch_game)
-        print("[BeamNG] Successfully connected to simulator!")
+        sock.bind(('127.0.0.1', telemetry_port))
     except Exception as e:
-        print(f"[BeamNG Error] Could not connect to BeamNG: {e}")
-        print("Please ensure BeamNG.drive is open with the Tokyo Expressway scenario loaded.")
+        print(f"[Error] Could not bind UDP socket on 127.0.0.1:{telemetry_port}: {e}")
         return
 
+    sock.settimeout(1.0)
     video_recorder = None
-    bng_hud_hidden = False
     csv_file = None
     points_logged = 0
     max_dist_reached = 0.0
 
     try:
         # Prompt experimenter / participant
-        print("\n--- EXPERIMENT PREPARATION ---")
-        print("1. In BeamNG: Load Tokyo Expressway C1 scenario in Freeroam.")
-        print("2. Ensure the vehicle is placed at the starting grid line.")
-        print("Waiting for active vehicle in simulation...")
+        print("--- EXPERIMENT PREPARATION ---")
+        print("1. In BeamNG: Click 'Freeroam' and load Tokyo Expressway C1.")
+        print("2. Ensure your vehicle is spawned at the starting grid line.")
+        print("3. Press '1' (or 'C') in-game for Driver Cockpit POV.")
+        print("4. Press 'Alt + U' in-game to hide the speedometer / HUD.")
+        print(f"\nWaiting for vehicle telemetry from BeamNG on port {telemetry_port}...")
 
-        vehicle = None
-        while vehicle is None:
+        # Wait for vehicle telemetry stream from BeamNG
+        connected = False
+        while not connected:
             try:
-                vehicles = bng.get_current_vehicles()
-                if vehicles:
-                    vid = list(vehicles.keys())[0]
-                    vehicle = vehicles[vid]
-                    vehicle.connect(bng)
-                    print(f"[BeamNG] Vehicle connected! (ID: {vid})")
-            except Exception:
+                data, addr = sock.recvfrom(1024)
+                if len(data) >= PACKET_SIZE:
+                    connected = True
+                    print(f"\n[BeamNG] Vehicle connected! Live 10Hz telemetry received from {addr[0]}.")
+            except socket.timeout:
                 pass
-            if vehicle is None:
-                time.sleep(1.5)
-
-        # Attach Electrics sensor for throttle, brake, steering
-        if 'electrics' not in vehicle.sensors.data:
-            vehicle.sensors.attach('electrics', Electrics())
-            print("[BeamNG] Attached Electrics sensor for control input telemetry.")
-
-        # HIDE HUD (Alt+U equivalent)
-        print("[BeamNG] Hiding HUD & digital speedometer...")
-        try:
-            bng.ui.hide_hud()
-            bng_hud_hidden = True
-            bng.ui.display_message(
-                f"STUDY SESSION {participant_id}: Speedometer hidden! Maintain {target_speed_kmh:.0f} km/h by perception."
-            )
-        except Exception as e:
-            print(f"[Warning] Could not hide HUD via API: {e}")
 
         # Start Video Recorder if requested
         if record_video:
@@ -301,28 +282,37 @@ def run_study(
         writer.writerow(csv_headers)
 
         start_time = time.time()
-        next_log_time = start_time
         max_dist_reached = 0.0
         points_logged = 0
-
-        # Telemetry Loop (10 Hz Synchronized)
         finish_triggered = False
 
+        # Drain any stale packets before starting telemetry loop
+        sock.settimeout(0.01)
+        while True:
+            try:
+                sock.recvfrom(1024)
+            except Exception:
+                break
+        sock.settimeout(0.5)
+
+        # Telemetry Loop (10 Hz Synchronized from BeamNG stream)
         while not finish_triggered:
-            vehicle.sensors.poll()
-            state = vehicle.state
-            pos = state.get('pos', [0.0, 0.0, 0.0])
-            vel = state.get('vel', [0.0, 0.0, 0.0])
+            try:
+                data, _ = sock.recvfrom(1024)
+                if len(data) < PACKET_SIZE:
+                    continue
+            except socket.timeout:
+                continue
 
-            # Calculate actual 3D speed in km/h
-            speed_mps = math.sqrt(vel[0]**2 + vel[1]**2 + vel[2]**2)
-            actual_speed_kmh = round(speed_mps * 3.6, 2)
+            sim_time, pos_x, pos_y, pos_z, vel_x, vel_y, vel_z, speed_kmh, throttle_val, brake_val, steering_val = struct.unpack(
+                PACKET_FORMAT, data[:PACKET_SIZE]
+            )
 
-            # Retrieve control inputs from Electrics
-            el_data = vehicle.sensors['electrics'] if 'electrics' in vehicle.sensors.data else {}
-            throttle_val = round(float(el_data.get('throttle_input', el_data.get('throttle', 0.0))), 3)
-            brake_val = round(float(el_data.get('brake_input', el_data.get('brake', 0.0))), 3)
-            steering_val = round(float(el_data.get('steering_input', el_data.get('steering', 0.0))), 3)
+            actual_speed_kmh = round(float(speed_kmh), 2)
+            throttle_val = round(float(throttle_val), 3)
+            brake_val = round(float(brake_val), 3)
+            steering_val = round(float(steering_val), 3)
+            pos = [float(pos_x), float(pos_y), float(pos_z)]
 
             # Spatial matching via KDTree
             _, matched = matcher.query(pos[0], pos[1])
@@ -374,29 +364,29 @@ def run_study(
             sys.stdout.flush()
 
             # FINISH THRESHOLD DETECTION
-            # 1. Matched distance exceeds course threshold (19.98 km)
-            # 2. Or driver is near finish coordinate within 30m after completing >19.0 km
             dist_to_finish = math.hypot(pos[0] - matcher.finish_coord[0], pos[1] - matcher.finish_coord[1])
-            if dist_km >= finish_dist_threshold_km or (max_dist_reached > 19.0 and dist_to_finish < 30.0):
+            if dist_km >= finish_dist_threshold_km or (max_dist_reached >= 19.95 and dist_to_finish < 8.0):
                 finish_triggered = True
+                completed_dist = 20.00 if max_dist_reached >= 19.95 else round(max_dist_reached, 2)
                 print("\n\n" + "*"*70)
-                print(f"  >>> FINISH LINE REACHED AT {dist_km:.2f} KM! STUDY COMPLETED <<<")
+                print(f"  >>> FINISH LINE REACHED AT {completed_dist:.2f} KM! STUDY COMPLETED <<<")
                 print("*"*70)
                 try:
-                    bng.ui.display_message("FINISH LINE! Course completed. You may stop the car.")
+                    import winsound
+                    winsound.Beep(1200, 600)
                 except Exception:
                     pass
                 break
 
-            # Maintain 10 Hz loop
-            next_log_time += 0.1
-            sleep_time = next_log_time - time.time()
-            if sleep_time > 0:
-                time.sleep(sleep_time)
-
     except KeyboardInterrupt:
         print("\n\n[Study] Session manually terminated by experimenter (Ctrl+C).")
     finally:
+        # Close UDP socket
+        try:
+            sock.close()
+        except Exception:
+            pass
+
         # Close CSV
         if csv_file is not None:
             try:
@@ -409,22 +399,15 @@ def run_study(
             print("[Recorder] Finalizing video recording...")
             video_recorder.stop()
 
-        # RESTORE HUD
-        if bng_hud_hidden:
-            print("[BeamNG] Restoring in-game HUD...")
-            try:
-                bng.ui.show_hud()
-            except Exception:
-                pass
-
         # Save session metadata
+        completed_dist = 20.00 if max_dist_reached >= 19.95 else round(max_dist_reached, 3)
         meta = {
             "participant_id": participant_id,
             "session_time": time.strftime("%Y-%m-%d %H:%M:%S"),
             "target_speed_kmh": target_speed_kmh,
             "target_profile": target_profile,
             "points_logged": points_logged,
-            "course_distance_logged_km": round(max_dist_reached, 3),
+            "course_distance_logged_km": completed_dist,
             "data_file": out_csv,
             "video_file": out_video if record_video else None
         }
@@ -436,11 +419,8 @@ def run_study(
         print(f"  - Session Meta:  {out_meta}")
         if record_video:
             print(f"  - Screen Video:  {out_video}")
-
-        try:
-            bng.close()
-        except Exception:
-            pass
+        print("\nPress 'Alt + U' in BeamNG to restore HUD.")
+        print(f"To analyze this session, run:\n  python analyze_participant.py -f {out_csv}\n")
 
 
 # ==============================================================================
@@ -471,11 +451,12 @@ def main():
         help="Optional path to JSON file specifying zone-specific target speeds"
     )
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    default_results_dir = os.path.join(script_dir, 'results')
     parser.add_argument(
         '-o', '--output-dir',
         type=str,
-        default=script_dir,
-        help="Directory where CSV telemetry and video recordings will be saved (default: user_study folder)"
+        default=default_results_dir,
+        help="Directory where CSV telemetry and video recordings will be saved (default: user_study/results)"
     )
     parser.add_argument(
         '--route-csv',
@@ -508,7 +489,7 @@ def main():
     parser.add_argument(
         '--finish-dist',
         type=float,
-        default=19.98,
+        default=19.995,
         help="Distance threshold in km to trigger automatic lap completion"
     )
     parser.add_argument(

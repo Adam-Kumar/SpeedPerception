@@ -53,9 +53,9 @@ Research/
 * **Host OS:** Windows (PowerShell)
 * **Python Runtime:** Python 3.11 (`C:/Users/xadam/AppData/Local/Programs/Python/Python311/python.exe`)
 * **Core Libraries:** `beamngpy`, `pandas`, `numpy`, `scipy` (KDTree), `matplotlib`, `seaborn`, `mss`, `cv2`
-* **Simulator:** BeamNG.drive (v0.3x+)
+* **Simulator:** BeamNG.drive (v0.3x – v0.40+ Steam edition)
 * **Default Game Directory:** `C:\Program Files (x86)\Steam\steamapps\common\BeamNG.drive`
-* **BeamNG API Interface:** `beamngpy.BeamNGpy('127.0.0.1', 64256)`
+* **Telemetry Interface:** Native 10Hz UDP stream via `lua/vehicle/protocols/userStudy.lua` listening on `127.0.0.1:64256` (11-float packet: `time, pos(3), vel(3), speed_kmh, throttle, brake, steering`)
 * **Active Track:** Tokyo Shuto Expressway C1 Loop (custom barrier configuration)
 * **Course Cutoff Length:** Exactly 20.00 km (Start: $X=3819.65, Y=-5113.19$ | Finish: $X=-8782.59, Y=-16208.17$)
 * **Target Baseline Speed:** 80.0 km/h baseline
@@ -104,34 +104,36 @@ Sampled at a strict 10Hz synchronized loop during human driving trials:
   - Disables in-game HUD & digital speedometer (`bng.ui.hide_hud()`).
   - Restores HUD reliably on exit or interrupt (`bng.ui.show_hud()`).
   - Auto-resolves route lookup path (`route_mapping/annotated_route.csv`).
-  - Saves all session telemetry directly into `user_study/`.
+  - Saves all session telemetry directly into `user_study/results/`.
   - Automatically detects 20.0 km finish threshold to stop cleanly.
   - Supports optional screen recording (`--record-video`).
-- [x] **Automated Analysis Pipeline (`user_study/analyze_participant.py`):**
-  - Computes zone-by-zone Speed Gap ($\mu, \sigma$, median, min, max, RMSE).
-  - Quantifies throttle hunting ($\sigma_{\mathrm{throttle}}$) and adjustment jerk ($|\Delta \mathrm{thr}/\Delta t|$).
-  - Performs one-way ANOVA and Kruskal-Wallis hypothesis tests across zones.
-  - Generates 4 publication figures: Box plot, 20km Longitudinal Profile with shaded zones, Control Dynamics, and Stacked Misperception Proportions.
-  - Generates summary CSVs and Markdown report into `user_study/analysis_outputs/`.
-- [x] **Modular Directory Organization:** Separated into `route_mapping/` and `user_study/`, cleaned all demo test files, made all script paths self-resolving, and documented in `README.md`.
+- [x] **Accurate 20.00 km Finish Triggering:**
+  - Tightened finish proximity detection radius from 30.0m to 8.0m in `user_study.py`.
+  - Updated completion threshold to 19.995 km and clamped/reported lap completion cleanly at 20.00 km.
+- [x] **Streamlined Analysis Pipeline (`user_study/analyze_participant.py`):**
+  - Generates strictly the 3 focused visual figures:
+    1. `longitudinal_speed_profile.png` (scaled dynamically to top speed recorded, with zone shading)
+    2. `longitudinal_throttle_profile.png` (dedicated 20.0 km throttle % profile with zone shading)
+    3. `speed_gap_by_zone_boxplot.png` (speed gap box plot with dynamic Y limits)
+  - All extraneous plots, reports, and summary CSVs deleted.
+  - Automatically finds telemetry logs in `user_study/results/`.
+- [x] **In-Vehicle Gauge Hiders Put on Hold:**
+  - Experimental gauge overrides cleared from BeamNG user folder.
+  - Driving POV standardized to realistic in-cabin Driver Seat POV at normal viewing angle.
+  - Vehicle selection and specific interior cluster suppression deferred to study vehicle finalization.
 
 ---
 
 ## 6. Immediate Next Tasks
 
-1. **Conduct First Human Participant Pilot Session:**
-   - Launch BeamNG with Tokyo Expressway scenario.
-   - Run: `cd user_study; python user_study.py --participant-id P01 --target-speed 80.0`
-   - Verify participant completes the 20.0 km lap and that `user_study/participant_P01_data.csv` is produced.
-2. **Execute Analysis on Real Participant Data:**
-   - Run: `cd user_study; python analyze_participant.py -f participant_P01_data.csv`
-   - Review output metrics and figures in `user_study/analysis_outputs/` to verify empirical trends (e.g., under-speeding in tunnels, over-speeding on bridges).
-3. **Cohort Aggregation (Once $N \ge 3$ participants collected):**
-   - Run: `cd user_study; python analyze_participant.py`
-   - Examine ANOVA $p$-values and cross-participant consistency.
-4. **Transition to Phase 2 (AR Peripheral Visual Cues):**
-   - Specify VR headset integration requirements (OpenXR / SteamVR / BeamNG camera overlay).
-   - Design dynamic optical flow cues that modulate in response to real-time `speed_gap_kmh`.
+1. **Finalize Study Vehicle:**
+   - Select the participant test vehicle (make/model) for the user study.
+2. **Conduct Experimental Participant Sessions:**
+   - Run: `python user_study/user_study.py --participant-id <PID> --target-speed 80.0`
+   - Telemetry automatically archives into `user_study/results/`.
+3. **Analyze Participant Results:**
+   - Run: `python user_study/analyze_participant.py`
+   - Generates updated speed profile, throttle profile, and box plot in `user_study/analysis_outputs/`.
 
 ---
 
