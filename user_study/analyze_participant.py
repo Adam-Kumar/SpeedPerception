@@ -4,10 +4,19 @@ Automated Analysis Pipeline: Predictive Modeling of Speed Misperception
 Project: Predictive Modeling of Speed Misperception and Mitigation Utilizing Dynamic AR Peripheral Cues
 Focus: Phase 1 — Problem Identification & Baseline Telemetry Collection
 
-Focused Visualization Suite:
-1. Longitudinal Speed Profile (scaled to top recorded speed with zone shading)
-2. Longitudinal Throttle Profile (driver throttle % across 20.0 km with zone shading)
-3. Speed Misperception Gap Box Plot by Environmental Zone
+Capabilities:
+1. Automatically discovers all participant telemetry CSVs in 'user_study/results/'.
+2. Generates Individual Participant Visualizations in 'user_study/analysis_outputs/individual/':
+   - individual_<ID>_longitudinal_speed_profile.png
+   - individual_<ID>_longitudinal_throttle_profile.png
+   - individual_<ID>_longitudinal_steering_profile.png
+   - individual_<ID>_speed_gap_by_zone_boxplot.png
+3. Computes Spatially-Aligned Multi-Participant Averages along the 20.0 km route and generates
+   Averaged Cohort Visualizations in 'user_study/analysis_outputs/averaged/':
+   - averaged_longitudinal_speed_profile.png
+   - averaged_longitudinal_throttle_profile.png
+   - averaged_longitudinal_steering_profile.png
+   - averaged_speed_gap_by_zone_boxplot.png
 """
 
 import os
@@ -42,11 +51,11 @@ ZONE_ORDER = [
 
 
 # ==============================================================================
-# 1. METRIC EXTRACTION & COMPUTATION
+# 1. METRIC EXTRACTION & SPATIAL AVERAGING
 # ==============================================================================
 
 def compute_zone_metrics(df: pd.DataFrame, participant_id: str = "Unknown") -> pd.DataFrame:
-    """Computes speed gap metrics across environmental zones for console summary."""
+    """Computes speed gap and steering metrics across environmental zones for console summary."""
     records = []
     required = ['speed_kmh', 'target_speed_kmh', 'speed_gap_kmh', 'environment_zone']
     for col in required:
@@ -63,6 +72,7 @@ def compute_zone_metrics(df: pd.DataFrame, participant_id: str = "Unknown") -> p
         speed = np.asarray(group['speed_kmh'], dtype=float)
         target = np.asarray(group['target_speed_kmh'], dtype=float)
         gap = np.asarray(group['speed_gap_kmh'], dtype=float)
+        steering = np.asarray(group['steering'], dtype=float) if 'steering' in group.columns else np.zeros_like(speed)
 
         mean_gap = float(np.mean(gap))
         std_gap = float(np.std(gap))
@@ -70,6 +80,7 @@ def compute_zone_metrics(df: pd.DataFrame, participant_id: str = "Unknown") -> p
 
         mean_speed = float(np.mean(speed))
         mean_target = float(np.mean(target))
+        mean_abs_steer = float(np.mean(np.abs(steering)))
 
         under_pct = float(np.mean(gap < -5.0) * 100.0)
         over_pct = float(np.mean(gap > 5.0) * 100.0)
@@ -91,6 +102,7 @@ def compute_zone_metrics(df: pd.DataFrame, participant_id: str = "Unknown") -> p
             'speed_gap_mean': mean_gap,
             'speed_gap_std': std_gap,
             'rmse_kmh': rmse,
+            'mean_abs_steering_deg': mean_abs_steer,
             'pct_underspeed_5kmh': under_pct,
             'pct_ontarget_5kmh': ontarget_pct,
             'pct_overspeed_5kmh': over_pct,
@@ -105,11 +117,69 @@ def compute_zone_metrics(df: pd.DataFrame, participant_id: str = "Unknown") -> p
     return summary_df
 
 
+def build_spatially_averaged_dataframe(all_dfs: list) -> pd.DataFrame:
+    """
+    Aligns multiple participant runs onto a common 20.0 km spatial distance grid (step = 0.005 km / 5m)
+    and computes the point-by-point average across participants for speed, target speed, throttle,
+    and steering angle.
+    """
+    if len(all_dfs) == 1:
+        return all_dfs[0].copy()
+
+    # Determine common distance grid (0.00 to max distance at 5-meter resolution)
+    max_dist = max(float(df['Distance_km'].max()) for df in all_dfs)
+    grid_dist = np.linspace(0.0, max_dist, int(max_dist / 0.005) + 1)
+
+    interp_speeds = []
+    interp_targets = []
+    interp_throttles = []
+    interp_steerings = []
+
+    for df in all_dfs:
+        # Sort by distance and collapse duplicate distance snaps within the single run
+        df_sorted = df.sort_values('Distance_km')
+        df_unique = df_sorted.groupby('Distance_km', as_index=False).agg({
+            'speed_kmh': 'mean',
+            'target_speed_kmh': 'mean',
+            'throttle': 'mean',
+            'steering': 'mean'
+        })
+
+        d_vals = np.asarray(df_unique['Distance_km'], dtype=float)
+        interp_speeds.append(np.interp(grid_dist, d_vals, np.asarray(df_unique['speed_kmh'], dtype=float)))
+        interp_targets.append(np.interp(grid_dist, d_vals, np.asarray(df_unique['target_speed_kmh'], dtype=float)))
+        interp_throttles.append(np.interp(grid_dist, d_vals, np.asarray(df_unique['throttle'], dtype=float)))
+        interp_steerings.append(np.interp(grid_dist, d_vals, np.asarray(df_unique['steering'], dtype=float)))
+
+    # Map each grid distance to its environmental zone using the densest participant dataframe
+    ref_df = max(all_dfs, key=len).sort_values('Distance_km').reset_index(drop=True)
+    ref_dists = np.asarray(ref_df['Distance_km'], dtype=float)
+    nearest_indices = np.searchsorted(ref_dists, grid_dist, side='left')
+    nearest_indices = np.clip(nearest_indices, 0, len(ref_df) - 1)
+    grid_zones = ref_df['environment_zone'].iloc[nearest_indices].values
+
+    mean_speed = np.mean(interp_speeds, axis=0)
+    mean_target = np.mean(interp_targets, axis=0)
+    mean_throttle = np.mean(interp_throttles, axis=0)
+    mean_steering = np.mean(interp_steerings, axis=0)
+
+    avg_df = pd.DataFrame({
+        'Distance_km': grid_dist,
+        'speed_kmh': mean_speed,
+        'target_speed_kmh': mean_target,
+        'speed_gap_kmh': mean_speed - mean_target,
+        'throttle': mean_throttle,
+        'steering': mean_steering,
+        'environment_zone': grid_zones
+    })
+    return avg_df
+
+
 def print_summary_table(summary_df: pd.DataFrame):
     """Prints a structured ASCII summary table to terminal."""
     header = (
         f"{'Zone':<18} | {'Samples':<7} | {'Mean v':<7} | {'Tgt v':<6} | "
-        f"{'Speed Gap':<15} | {'RMSE':<6} | {'% Under':<8} | {'% Over':<8} | {'Bias Classification':<18}"
+        f"{'Speed Gap':<15} | {'RMSE':<6} | {'|Steer|':<7} | {'% Under':<8} | {'% Over':<8} | {'Bias Classification':<18}"
     )
     divider = "-" * len(header)
     print("\n" + divider)
@@ -121,18 +191,39 @@ def print_summary_table(summary_df: pd.DataFrame):
         print(
             f"{row['zone']:<18} | {row['samples']:<7} | {row['actual_speed_mean']:<7.1f} | "
             f"{row['target_speed_mean']:<6.0f} | {gap_str:<15} | {row['rmse_kmh']:<6.1f} | "
-            f"{row['pct_underspeed_5kmh']:<7.1f}% | {row['pct_overspeed_5kmh']:<7.1f}% | "
+            f"{row['mean_abs_steering_deg']:<6.1f}° | {row['pct_underspeed_5kmh']:<7.1f}% | {row['pct_overspeed_5kmh']:<7.1f}% | "
             f"{row['dominant_bias']:<18}"
         )
     print(divider + "\n")
 
 
 # ==============================================================================
-# 2. FOCUSED VISUALIZATION SUITE
+# 2. VISUALIZATION SUITE (4 PLOTS PER DATASET)
 # ==============================================================================
 
+def _shade_environmental_zones(ax, dist: np.ndarray, zone_series: pd.Series) -> dict:
+    """Helper to shade contiguous environmental zones along the course distance axis."""
+    change_indices = np.where(zone_series != zone_series.shift())[0]
+    segment_starts = list(change_indices) + [len(zone_series)]
+
+    legend_patches = {}
+    for i in range(len(segment_starts) - 1):
+        idx_start = segment_starts[i]
+        idx_end = segment_starts[i + 1] - 1
+        d_start = dist[idx_start]
+        d_end = dist[idx_end]
+        zone_name = zone_series.iloc[idx_start]
+        color = ZONE_COLORS.get(zone_name, '#555555')
+
+        ax.axvspan(d_start, d_end, color=color, alpha=0.18)
+        if zone_name not in legend_patches:
+            legend_patches[zone_name] = mpatches.Patch(color=color, alpha=0.6, label=zone_name)
+
+    return legend_patches
+
+
 def plot_speed_gap_boxplot(
-    combined_df: pd.DataFrame,
+    df: pd.DataFrame,
     output_path: str,
     title_suffix: str = ""
 ):
@@ -143,12 +234,12 @@ def plot_speed_gap_boxplot(
     plt.style.use('dark_background')
     fig, ax = plt.subplots(figsize=(12, 7), dpi=300)
 
-    ordered_zones = [z for z in ZONE_ORDER if z in combined_df['environment_zone'].unique()]
-    data_by_zone = [np.asarray(combined_df[combined_df['environment_zone'] == z]['speed_gap_kmh'], dtype=float) for z in ordered_zones]
+    ordered_zones = [z for z in ZONE_ORDER if z in df['environment_zone'].unique()]
+    data_by_zone = [np.asarray(df[df['environment_zone'] == z]['speed_gap_kmh'], dtype=float) for z in ordered_zones]
 
     # Dynamic Y limits to fit all recorded data comfortably
-    raw_min = float(combined_df['speed_gap_kmh'].min())
-    raw_max = float(combined_df['speed_gap_kmh'].max())
+    raw_min = float(df['speed_gap_kmh'].min())
+    raw_max = float(df['speed_gap_kmh'].max())
     y_min = math.floor(min(-10.0, raw_min) / 10.0) * 10.0 - 5.0
     y_max = math.ceil(max(10.0, raw_max) / 10.0) * 10.0 + 5.0
 
@@ -210,23 +301,7 @@ def plot_longitudinal_speed_profile(
     speed = np.asarray(df_sorted['speed_kmh'], dtype=float)
     target = np.asarray(df_sorted['target_speed_kmh'], dtype=float)
 
-    # Zone background shading
-    zone_series = df_sorted['environment_zone']
-    change_indices = np.where(zone_series != zone_series.shift())[0]
-    segment_starts = list(change_indices) + [len(df_sorted)]
-
-    legend_patches = {}
-    for i in range(len(segment_starts) - 1):
-        idx_start = segment_starts[i]
-        idx_end = segment_starts[i+1] - 1
-        d_start = dist[idx_start]
-        d_end = dist[idx_end]
-        zone_name = zone_series.iloc[idx_start]
-        color = ZONE_COLORS.get(zone_name, '#555555')
-
-        ax.axvspan(d_start, d_end, color=color, alpha=0.18)
-        if zone_name not in legend_patches:
-            legend_patches[zone_name] = mpatches.Patch(color=color, alpha=0.6, label=zone_name)
+    legend_patches = _shade_environmental_zones(ax, dist, df_sorted['environment_zone'])
 
     # Actual and Target Speed traces
     ax.plot(dist, speed, color='#00f2fe', linewidth=1.5, label='Actual Speed (km/h)', alpha=0.95)
@@ -270,23 +345,7 @@ def plot_longitudinal_throttle_profile(
     dist = np.asarray(df_sorted['Distance_km'], dtype=float)
     thr = np.asarray(df_sorted['throttle'], dtype=float) if 'throttle' in df_sorted.columns else np.zeros_like(dist)
 
-    # Zone background shading
-    zone_series = df_sorted['environment_zone']
-    change_indices = np.where(zone_series != zone_series.shift())[0]
-    segment_starts = list(change_indices) + [len(df_sorted)]
-
-    legend_patches = {}
-    for i in range(len(segment_starts) - 1):
-        idx_start = segment_starts[i]
-        idx_end = segment_starts[i+1] - 1
-        d_start = dist[idx_start]
-        d_end = dist[idx_end]
-        zone_name = zone_series.iloc[idx_start]
-        color = ZONE_COLORS.get(zone_name, '#555555')
-
-        ax.axvspan(d_start, d_end, color=color, alpha=0.18)
-        if zone_name not in legend_patches:
-            legend_patches[zone_name] = mpatches.Patch(color=color, alpha=0.6, label=zone_name)
+    legend_patches = _shade_environmental_zones(ax, dist, df_sorted['environment_zone'])
 
     # Throttle trace
     ax.plot(dist, thr * 100.0, color='#2ed573', linewidth=1.2, label='Throttle (%)')
@@ -309,6 +368,68 @@ def plot_longitudinal_throttle_profile(
     print(f"[Plot Saved] Longitudinal Throttle Profile -> {output_path}")
 
 
+def plot_longitudinal_steering_profile(
+    df: pd.DataFrame,
+    output_path: str,
+    title_suffix: str = ""
+):
+    """
+    Figure 4: Longitudinal Steering Angle Profile across 20.0 km.
+    Shows driver steering input angle (degrees) across environmental zones to evaluate
+    how road curvature and steering demand correlate with perceived speed.
+    """
+    plt.style.use('dark_background')
+    fig, ax = plt.subplots(figsize=(15, 5.5), dpi=300)
+
+    df_sorted = df.sort_values('Distance_km').reset_index(drop=True)
+    dist = np.asarray(df_sorted['Distance_km'], dtype=float)
+    steering = np.asarray(df_sorted['steering'], dtype=float) if 'steering' in df_sorted.columns else np.zeros_like(dist)
+
+    legend_patches = _shade_environmental_zones(ax, dist, df_sorted['environment_zone'])
+
+    # Zero-degree neutral steering reference line
+    ax.axhline(0, color='#ffffff', linestyle='--', linewidth=1.2, alpha=0.6, label='Neutral Steering (0°)')
+
+    # Steering angle trace
+    ax.plot(dist, steering, color='#ffa502', linewidth=1.2, label='Steering Angle (°)', alpha=0.95)
+
+    # Dynamic symmetric Y-axis scaled to maximum steering angle recorded
+    max_abs_steer = max(15.0, float(np.max(np.abs(steering))))
+    y_bound = math.ceil(max_abs_steer / 10.0) * 10.0 + 5.0
+    ax.set_ylim(-y_bound, y_bound)
+    ax.set_xlim(0, max(20.0, float(dist.max())))
+
+    ax.set_ylabel("Steering Angle (°)", fontsize=12, fontweight='bold')
+    ax.set_xlabel("Course Distance (km)", fontsize=12, fontweight='bold')
+    ax.set_title(f"20.0 km Longitudinal Steering Angle Profile {title_suffix}", fontsize=14, fontweight='bold', pad=12)
+    ax.grid(True, linestyle='--', alpha=0.25)
+
+    handles, labels = ax.get_legend_handles_labels()
+    handles += list(legend_patches.values())
+    labels += list(legend_patches.keys())
+    ax.legend(handles=handles, labels=labels, loc='upper right', ncol=3, framealpha=0.85, fontsize=9)
+
+    plt.tight_layout()
+    fig.savefig(output_path, dpi=300)
+    plt.close(fig)
+    print(f"[Plot Saved] Longitudinal Steering Profile -> {output_path}")
+
+
+def generate_four_plots(df_longitudinal: pd.DataFrame, df_boxplot: pd.DataFrame, target_folder: str, prefix: str, title_suffix: str):
+    """Generates the complete 4-plot visualization suite with clear filename prefixes."""
+    os.makedirs(target_folder, exist_ok=True)
+
+    speed_file = os.path.join(target_folder, f"{prefix}_longitudinal_speed_profile.png")
+    throttle_file = os.path.join(target_folder, f"{prefix}_longitudinal_throttle_profile.png")
+    steering_file = os.path.join(target_folder, f"{prefix}_longitudinal_steering_profile.png")
+    boxplot_file = os.path.join(target_folder, f"{prefix}_speed_gap_by_zone_boxplot.png")
+
+    plot_longitudinal_speed_profile(df_longitudinal, speed_file, title_suffix=title_suffix)
+    plot_longitudinal_throttle_profile(df_longitudinal, throttle_file, title_suffix=title_suffix)
+    plot_longitudinal_steering_profile(df_longitudinal, steering_file, title_suffix=title_suffix)
+    plot_speed_gap_boxplot(df_boxplot, boxplot_file, title_suffix=title_suffix)
+
+
 # ==============================================================================
 # 3. PIPELINE CONTROLLER
 # ==============================================================================
@@ -317,7 +438,11 @@ def run_analysis_pipeline(
     input_files: list,
     output_dir: str = "analysis_outputs"
 ):
-    """Executes the focused visualization pipeline for speed, throttle, and speed gap."""
+    """
+    Executes the visualization pipeline:
+    1. Generates individual participant plots in '<output_dir>/individual/'
+    2. Generates spatially-averaged cohort plots in '<output_dir>/averaged/'
+    """
     if not input_files:
         print("\n[Notice] No participant data files provided or found.")
         print("To collect participant data, run:")
@@ -326,45 +451,66 @@ def run_analysis_pipeline(
         print("  python analyze_participant.py\n")
         return
 
-    os.makedirs(output_dir, exist_ok=True)
+    individual_dir = os.path.join(output_dir, "individual")
+    averaged_dir = os.path.join(output_dir, "averaged")
+    os.makedirs(individual_dir, exist_ok=True)
+    os.makedirs(averaged_dir, exist_ok=True)
 
     print(f"\n[Pipeline] Ingesting {len(input_files)} participant file(s)...")
     for f in input_files:
         print(f"  - {f}")
 
     all_dfs = []
-    for filepath in input_files:
+    for filepath in sorted(input_files):
         filename = os.path.basename(filepath)
         pid = filename.replace('participant_', '').replace('_data.csv', '')
         df = pd.read_csv(filepath)
         df['participant_id'] = pid
         all_dfs.append(df)
 
-    combined_df = pd.concat(all_dfs, ignore_index=True)
-    combined_summary = compute_zone_metrics(combined_df, participant_id="Cohort")
+        # Print individual summary table
+        indiv_summary = compute_zone_metrics(df, participant_id=pid)
+        print("\n" + "=" * 80)
+        print(f"  INDIVIDUAL PARTICIPANT SUMMARY: {pid}")
+        print("=" * 80)
+        print_summary_table(indiv_summary)
 
-    # Print summary table to terminal
-    print("\n" + "="*80)
-    print("  COHORT AGGREGATED METRICS SUMMARY")
-    print("="*80)
+        # Render 4 individual plots
+        print(f"[Pipeline] Rendering individual plots for Participant '{pid}'...")
+        generate_four_plots(
+            df_longitudinal=df,
+            df_boxplot=df,
+            target_folder=individual_dir,
+            prefix=f"individual_{pid}",
+            title_suffix=f"(Participant: {pid})"
+        )
+
+    # Combined / Averaged Cohort Analysis
+    combined_df = pd.concat(all_dfs, ignore_index=True)
+    combined_summary = compute_zone_metrics(combined_df, participant_id="Averaged_Cohort")
+
+    print("\n" + "=" * 80)
+    print(f"  AVERAGED COHORT METRICS SUMMARY (N = {len(all_dfs)} Participants)")
+    print("=" * 80)
     print_summary_table(combined_summary)
 
-    # Generate the 3 requested figures
-    print("[Pipeline] Rendering focused visualization outputs...")
-    title_suffix = f"({all_dfs[0]['participant_id'].iloc[0]})" if len(all_dfs) == 1 else "(Cohort)"
+    print(f"[Pipeline] Computing spatially-aligned average across {len(all_dfs)} participant(s)...")
+    averaged_longitudinal_df = build_spatially_averaged_dataframe(all_dfs)
 
-    speed_profile_file = os.path.join(output_dir, "longitudinal_speed_profile.png")
-    throttle_profile_file = os.path.join(output_dir, "longitudinal_throttle_profile.png")
-    boxplot_file = os.path.join(output_dir, "speed_gap_by_zone_boxplot.png")
+    print("[Pipeline] Rendering averaged cohort plots...")
+    generate_four_plots(
+        df_longitudinal=averaged_longitudinal_df,
+        df_boxplot=combined_df,
+        target_folder=averaged_dir,
+        prefix="averaged",
+        title_suffix=f"(Averaged Across N={len(all_dfs)} Participants)"
+    )
 
-    plot_longitudinal_speed_profile(all_dfs[0], speed_profile_file, title_suffix=title_suffix)
-    plot_longitudinal_throttle_profile(all_dfs[0], throttle_profile_file, title_suffix=title_suffix)
-    plot_speed_gap_boxplot(combined_df, boxplot_file, title_suffix=title_suffix)
-
-    print("\n" + "="*80)
-    print(f"  ANALYSIS PIPELINE COMPLETED SUCCESSFULLY!")
-    print(f"  Visualizations saved to: '{os.path.abspath(output_dir)}'")
-    print("="*80 + "\n")
+    print("\n" + "=" * 80)
+    print("  ANALYSIS PIPELINE COMPLETED SUCCESSFULLY!")
+    print(f"  - Individual Plots: '{os.path.abspath(individual_dir)}'")
+    print(f"  - Averaged Plots:   '{os.path.abspath(averaged_dir)}'")
+    print("=" * 80 + "\n")
 
 
 # ==============================================================================
@@ -395,7 +541,7 @@ def main():
         '-o', '--output-dir',
         type=str,
         default=None,
-        help="Directory to store visualization plots (default: user_study/analysis_outputs)"
+        help="Base directory to store 'individual/' and 'averaged/' visualization subfolders (default: user_study/analysis_outputs)"
     )
 
     args = parser.parse_args()

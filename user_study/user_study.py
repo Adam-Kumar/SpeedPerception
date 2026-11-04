@@ -2,22 +2,20 @@
 User Study Testing Script: Predictive Modeling of Speed Misperception
 ======================================================================
 Course: Tokyo Shuto Expressway C1 Loop (20.0 km)
-Platform: BeamNG.drive via beamngpy
+Platform: BeamNG.drive (Native 10Hz UDP Telemetry on 127.0.0.1:64256)
 
 Protocol:
-1. Connects to BeamNG.drive and attaches the participant's vehicle.
-2. Disables the in-game HUD and digital speedometer (Alt+U equivalent via bng.ui.hide_hud()).
-3. Samples 10Hz synchronized telemetry:
+1. Listens for the live 10Hz UDP telemetry stream from the participant's vehicle in BeamNG.drive.
+2. Samples 10Hz synchronized telemetry:
    - Position (X, Y, Z)
    - Actual Speed (km/h derived from 3D velocity vector)
    - Target Speed (km/h)
    - Speed Gap (v_actual - v_target)
-   - Driver Control Inputs (Throttle, Brake, Steering)
-4. Uses KDTree loaded from 'annotated_route.csv' to query the nearest course center-line point,
+   - Driver Control Inputs (Throttle, Brake, Steering Angle)
+3. Uses KDTree loaded from 'annotated_route.csv' to query the nearest course center-line point,
    logging 'Distance_km', 'environment_zone', and binary zone flags in real time.
-5. Automatically detects the 20.0 km finish threshold to terminate cleanly and save
-   'participant_<ID>_data.csv'.
-6. Safely restores HUD on exit/completion.
+4. Automatically detects the 20.0 km finish threshold to terminate cleanly and save
+   'participant_<ID>_data.csv' and 'participant_<ID>_meta.json' in 'user_study/results/'.
 """
 
 import os
@@ -26,20 +24,13 @@ import time
 import math
 import csv
 import json
+import socket
+import struct
 import argparse
 import threading
 import numpy as np
 import pandas as pd
 from scipy.spatial import KDTree
-
-# BeamNGpy imports
-try:
-    from beamngpy import BeamNGpy, Vehicle
-    from beamngpy.sensors import Electrics
-except ImportError:
-    print("Error: 'beamngpy' is not installed in this Python environment.")
-    print("Install via: pip install beamngpy")
-    sys.exit(1)
 
 # Screen recorder dependencies
 try:
@@ -185,11 +176,10 @@ def run_study(
 ):
     """
     Executes the participant testing session:
-    - Launches/connects to BeamNG
-    - Hides HUD
-    - 10Hz telemetry capture & spatial matching
-    - Auto-stop on 20.0 km finish
-    - Clean exit and data export
+    - Connects to BeamNG via native 10Hz UDP telemetry stream
+    - 10Hz telemetry capture & KDTree spatial matching
+    - Auto-stop on 20.00 km finish
+    - Clean exit and data export to user_study/results/
     """
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -204,8 +194,6 @@ def run_study(
     # 1. Initialize Route Matcher
     matcher = RouteMatcher(route_csv_path)
 
-    import socket
-    import struct
     PACKET_FORMAT = '<11f'
     PACKET_SIZE = struct.calcsize(PACKET_FORMAT)
 
@@ -236,8 +224,7 @@ def run_study(
         print("--- EXPERIMENT PREPARATION ---")
         print("1. In BeamNG: Click 'Freeroam' and load Tokyo Expressway C1.")
         print("2. Ensure your vehicle is spawned at the starting grid line.")
-        print("3. Press '1' (or 'C') in-game for Driver Cockpit POV.")
-        print("4. Press 'Alt + U' in-game to hide the speedometer / HUD.")
+        print("3. Ensure the camera is in Driver Cockpit POV at a normal driving angle.")
         print(f"\nWaiting for vehicle telemetry from BeamNG on port {telemetry_port}...")
 
         # Wait for vehicle telemetry stream from BeamNG
@@ -265,7 +252,7 @@ def run_study(
         for c in range(countdown_sec, 0, -1):
             print(f"Starting in {c}...", end="\r", flush=True)
             time.sleep(1.0)
-        print("\n>>> GO! Drive at target speed without speedometer. <<<\n")
+        print("\n>>> GO! Maintain the target speed using your natural perception. <<<\n")
 
         # Prepare CSV Writer
         csv_headers = [
@@ -359,7 +346,7 @@ def run_study(
                 f"\r[{current_elapsed:6.1f}s | {dist_km:5.2f}/20.0 km] "
                 f"Zone: {env_zone:<16} | "
                 f"v: {actual_speed_kmh:5.1f} km/h (tgt:{target_v:4.0f}) {gap_tag} | "
-                f"Thr: {int(throttle_val*100):2d}% Brk: {int(brake_val*100):2d}%"
+                f"Thr: {int(throttle_val*100):2d}% Brk: {int(brake_val*100):2d}% Str: {steering_val:+5.1f}"
             )
             sys.stdout.flush()
 
@@ -419,8 +406,7 @@ def run_study(
         print(f"  - Session Meta:  {out_meta}")
         if record_video:
             print(f"  - Screen Video:  {out_video}")
-        print("\nPress 'Alt + U' in BeamNG to restore HUD.")
-        print(f"To analyze this session, run:\n  python analyze_participant.py -f {out_csv}\n")
+        print(f"\nTo analyze all sessions (individual + averaged), run:\n  python analyze_participant.py\n")
 
 
 # ==============================================================================
@@ -473,7 +459,7 @@ def main():
     parser.add_argument(
         '--no-launch',
         action='store_true',
-        help="Do not launch BeamNG executable, connect to an existing running instance"
+        help="Connect to an existing running BeamNG instance"
     )
     parser.add_argument(
         '--record-video',
