@@ -222,9 +222,12 @@ def run_study(
     try:
         # Prompt experimenter / participant
         print("--- EXPERIMENT PREPARATION ---")
-        print("1. In BeamNG: Click 'Freeroam' and load Tokyo Expressway C1.")
-        print("2. Ensure your vehicle is spawned at the starting grid line.")
-        print("3. Ensure the camera is in Driver Cockpit POV at a normal driving angle.")
+        print("1. Familiarization Phase: Let the participant drive the Bruckell Bastion for a few")
+        print("   minutes in a practice location with gauges ON (press 'G' to toggle gauges ON/OFF)")
+        print("   to get used to the controls and calibrate what 80 km/h looks and feels like.")
+        print("2. In BeamNG: Load Tokyo Expressway C1 with the Bruckell Bastion at the start line.")
+        print("3. Press 'G' to ensure Speedometer & RPM needles + digital speed are HIDDEN.")
+        print("4. Ensure the camera is in Driver Cockpit POV at a normal driving angle.")
         print(f"\nWaiting for vehicle telemetry from BeamNG on port {telemetry_port}...")
 
         # Wait for vehicle telemetry stream from BeamNG

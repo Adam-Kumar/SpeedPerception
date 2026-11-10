@@ -10,8 +10,10 @@ Investigating human speed misperception across varied road environments without 
   1. **Phase 1 (Current Focus):** Quantify how distinct road environments (tunnels, elevated bridges, high-density urban corridors, and open rural expressways) and road curvature (steering angle demand) distort human perception of vehicle speed in the absence of a speedometer ($v_{\mathrm{actual}} - v_{\mathrm{target}}$).
   2. **Phase 2 (Mitigation):** Design and evaluate dynamic peripheral visual cues (e.g., optical flow arrows and peripheral pacing) simulated in a driving simulator.
 * **Simulation Platform:** BeamNG.drive (v0.3x – v0.40+) streaming 10Hz telemetry via a native UDP protocol extension (`lua/vehicle/protocols/userStudy.lua`) on `127.0.0.1:64256`.
+* **Standardized Study Vehicle:** **Bruckell Bastion** equipped with a real-time in-cabin gauge toggle (**`G`** key) that dynamically hides/shows the 3D analog speedometer needle, 3D analog RPM tachometer needle, and center LCD digital speed readout.
 * **Track:** Tokyo Shuto Expressway C1 Loop (a cut segment of 20.0 km of total course length), fitted with custom barriers, environmental backdrops, and an overhead finish line at 20.0 km.
 * **Target Baseline Speed:** Constant 80.0 km/h (or zone-specific speed profiles).
+* **Preparation & Speed Calibration Protocol:** Prior to starting the 20.0 km Tokyo C1 test lap, participants complete a brief familiarization drive (a few minutes in a separate practice location) with the Bruckell Bastion's gauges toggled **ON** (**`G`** key). This allows participants to acclimate to the vehicle's steering/throttle controls and establish an internal visual/perceptual reference for what **80 km/h** looks and feels like before the gauges are toggled **OFF** for the formal trial.
 
 ### Environmental Zones (Tokyo C1 Loop)
 | Zone | Course Time Range | Distance Range | Visual & Optical Flow Characteristics |
@@ -35,6 +37,15 @@ Research/
 ├── AGENT_STATE.md                     # AI agent state & technical handoff document
 │
 ├── levels/c1/                         # Custom BeamNG level configuration & assets for Tokyo C1
+├── lua/vehicle/protocols/             # Native 10Hz UDP telemetry protocol (userStudy.lua)
+├── vehicles/bastion/                  # Bruckell Bastion live gauge hider & keybind toggle ('G' key)
+│   ├── bastion_interior.jbeam         # Hooks studyGaugeToggle controller & study_hide_gauges electrics
+│   ├── input_actions.json             # Registers 'toggle_study_gauges' vehicle action
+│   ├── inputmaps/keyboard.json        # Binds 'G' key to toggle gauges ON/OFF in real time
+│   ├── lua/controller/
+│   │   └── studyGaugeToggle.lua       # Toggles 3D Speedometer & RPM needles + digital speed flag
+│   └── gauges_screen/
+│       └── gauge_standard.js          # Dynamically hides/shows center LCD digital speed readout
 │
 ├── route_mapping/                     # Track ground-truth mapping & spatial annotation
 │   ├── mapping_lap.py                 # 10Hz centerline telemetry & video recorder script
@@ -77,10 +88,14 @@ Research/
 Ground-truth centerline mapping and environmental zone classification have been finalized in `route_mapping/annotated_route.csv`.
 
 ### Step 2: Running a Participant Session
-1. Launch BeamNG.drive normally through Steam.
-2. In the main menu, click **Freeroam** and load the **Tokyo Expressway C1** map.
-3. Position your car at the start line and ensure the camera is in **Driver Cockpit POV** at a normal driving angle.
-4. In terminal, navigate to `user_study/` (or run directly from root):
+1. **Preparation & Familiarization Phase (3–5 minutes):**
+   * Launch BeamNG.drive and spawn the **Bruckell Bastion** in a separate practice location (outside the test route).
+   * Press **`G`** so the gauges are **VISIBLE** (`Preparation Mode: Speedometer & RPM Gauges VISIBLE`).
+   * Let the participant drive around for a few minutes to get comfortable with the steering/throttle/brake controls and observe what **80 km/h** looks and feels like from the Driver Cockpit POV.
+2. **Test Setup:**
+   * Load the **Tokyo Expressway C1** map with the **Bruckell Bastion** positioned at the start line in **Driver Cockpit POV**.
+   * Ensure the gauges (Speedometer needle, RPM needle, and center digital speed readout) are **HIDDEN** for the study (hidden by default on spawn, or press **`G`** to toggle them off).
+3. In terminal, navigate to `user_study/` (or run directly from root):
    ```powershell
    cd user_study
 
@@ -125,5 +140,6 @@ The analysis pipeline outputs:
 
 ---
 
-### Edited Map Assets (`levels/c1/`)
-The `levels/c1/` folder contains customized BeamNG level mission items, triggers, lighting, and markers for the Tokyo Shuto Expressway C1 loop. When migrating to a new machine, copy these contents into your BeamNG user folder under `levels/c1/` to load the exact experimental course setup.
+### Edited Map Assets (`levels/c1/`) & Study Vehicle Gauge Toggle (`vehicles/bastion/`)
+* **Edited Map Assets (`levels/c1/`):** Contains customized BeamNG level mission items, triggers, lighting, and markers for the Tokyo Shuto Expressway C1 loop. When migrating to a new machine, copy these contents into `%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\levels\c1\`.
+* **Bruckell Bastion Live Gauge Hider (`vehicles/bastion/`):** Overrides the stock Bruckell Bastion gauge cluster via BeamNG's Virtual File System (VFS) so pressing **`G`** toggles the **3D analog speedometer needle**, **3D analog RPM tachometer needle**, and **center LCD digital speed readout** ON/OFF in real time without reloading the vehicle. By default, the gauges spawn **HIDDEN** for the user study; press **`G`** during the preparation phase to reveal them, and **`G`** again to hide them. When migrating to a new machine, copy `vehicles/bastion/` and `lua/` into `%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\`.

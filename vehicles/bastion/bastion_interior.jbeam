@@ -1,0 +1,1965 @@
+{
+"bastion_dash": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Interior",
+        "value":2200,
+    },
+    "slotType" : "bastion_dash",
+    "slots2":[
+        ["name",                   "allowTypes",               "denyTypes", "default",             "description"],
+        ["bastion_sunvisors",      ["bastion_sunvisors"],      [],          "bastion_sunvisors",   "Sunvisors"],
+        ["bastion_shifter",        ["bastion_shifter"],        [],          "bastion_shifter_A",   "Shifter",             {"coreSlot":true}],
+        ["bastion_gauges",         ["bastion_gauges"],         [],          "bastion_gauges_luxe", "Gauge",               {"coreSlot":true}],
+        ["bastion_console",        ["bastion_console"],        [],          "bastion_console",     "Center Console",      {"coreSlot":true}],
+        ["bastion_dash_accessory", ["bastion_dash_accessory"], [],          "",                    "Dashboard Accessory"],
+        ["bastion_partition",      ["bastion_partition"],      [],          "",                    "Rear Partition"],
+        ["bastion_shiftlight",     ["bastion_shiftlight"],     [],          "",                    "Shift Light"],
+        ["bastion_seat_FR",        ["bastion_seat_FR"],        [],          "bastion_seat_FR",     "Passenger Seat"],
+        ["bastion_seat_FL",        ["bastion_seat_FL"],        [],          "bastion_seat_FL",     "Driver Seat",        {"variables":{"$isDriver":"LHD"}}],
+        ["bastion_seats_R",        ["bastion_seats_R"],        [],          "bastion_seats_R",     "Rear Seats"],
+        ["soundscape_horn",        ["soundscape_horn"],        [],          "soundscape_horn_6",   "Horn"],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_dash", ["bastion_dash"]],
+        ["bastion_center_mirror", ["bastion_body"]],
+        ["bastion_center_mirrorglass", ["bastion_body"]],
+        ["bastion_roof_console", ["bastion_body"]],
+        {"deformGroup":"display_break", "deformMaterialBase":"bastion_gps_screen", "deformMaterialDamaged":"bastion_gauges_break"},
+        ["bastion_gps_screen", ["bastion_dash"]],
+        ["bastion_gauges_screen", ["bastion_dash"]],
+        {"deformGroup":""},
+    ],
+    "triggers2":[
+      ["id", "idRef:", "idX:", "idY:", "type", "size", "baseRotation", "rotation", "translation", "baseTranslation"],
+      ["headlights",   "dshl","dsh","int_strw","sphere", 0.030,                      {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":-0.160, "y":-0.020, "z":-0.033}, {"color":[1, 0.5, 0, 1]}],
+      ["sw_ignition",  "dshl","dsh","int_strw","sphere", 0.030,                      {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x": 0.147, "y":-0.030, "z":-0.050}, {"color":[1, 0.5, 0, 1]}],
+      ["toggleESCMode","dshl","dsh","int_strw","sphere", 0.027,                      {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x": 0.393, "y":-0.010, "z": 0.012}, {"color":[1, 0.5, 0, 1]}],
+      ["hazard",       "dshl","dsh","int_strw","box",{"x":0.040,"y":0.035,"z":0.035},{"x":40,"y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x": 0.374, "y":-0.025, "z":-0.105}, {"color":[1, 0.5, 0, 1]}],
+    ],
+    "triggerEventLinks2":[
+        ["triggerId:triggers2", "triggerInput", "inputAction"],
+        ["headlights", "action0", "common:toggle_headlights"],
+        ["hazard", "action0", "common:toggle_hazard_signal"],
+        ["toggleESCMode", "action0", "common:toggleESCMode"],
+        ["sw_ignition", "action0", "common:activateStarterMotor"],
+        ["sw_ignition", "action2", "common:setIgnitionLevel3Momentary"],
+    ],
+    "actionsEnabled": [
+        ["id", "name"],
+        ["toggle_study_gauges", "toggle_study_gauges"],
+    ],
+    "mirrors": [
+        ["mesh", "idRef:", "id1:", "id2:"],
+        ["bastion_center_mirrorglass","rf1","rf1r","rf2",{"refBaseTranslation":{"x":0.01,"y":-0.08,"z":-0.135},"baseRotationGlobal":{"x":3.9,"y":0.0,"z":8.8}}],
+    ],
+    "glowMap":{
+        "bastion_gauges_screen":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off", "on":"bastion_gauges_screen", "on_intense":"bastion_gauges_screen_dim"},
+    },
+    "controller": [
+        ["fileName"],
+        ["beamNavigator", {"screenMaterialName": "@bastion_gps_screen", "htmlFilePath": "local://local/vehicles/common/navi_screen.html", "name":"bastion_navi"}],
+        ["studyGaugeToggle", {"name":"studyGaugeToggle"}],
+        ["gauges/genericGauges", {"name":"gauge", }],
+        ["gauges/customModules/environmentData"],
+        ["gauges/customModules/combustionEngineData"],
+        ["gauges/customModules/accelerationData"],
+    ],
+    "gauge": {
+        "configuration": {
+            "materialName": "@bastion_gauges_screen"
+            "htmlPath": "local://local/vehicles/bastion/gauges_screen/gauge_standard.html"
+            "displayWidth":512
+            "displayHeight":512
+        }
+        "displayData": {
+            "electrics": [
+                "gear",
+                "fuel",
+                "watertemp",
+                "wheelspeed",
+                "linelock",
+                "transbrake",
+                "odometer",
+                "trip",
+                "ignitionLevel",
+                "study_hide_gauges"
+            ]
+            "customModules": [
+                ["moduleName", "property"]
+                ["environmentData", "time"],
+                ["accelerationData", "accelerationSmooth"]
+                ["combustionEngineData", "currentPower"]
+            ]
+        },
+    },
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //steering column controls
+        ["turnsignal", "bastion_turn_signal_stalk", "dshl","dsh","int_strw", {"x": 90, "y":0, "z":180}, {"x":0, "y":-10, "z":0},  {"x":0, "y":0, "z":0},  -1, 1, -0.0, 1],
+        //pedals
+        ["throttle",   "bastion_pedal_gas",   "f1l","f1r","f6l",         {"x":0, "y":0, "z":180},   {"x":-25, "y":0, "z":0},  {"x":0.0, "y":0, "z":0}, 0, 1, 0,    1],
+    ],
+    "soundscape": [
+        ["name", "src"],
+        //indicator6,
+        {"node:":"int_strw"},
+        ["indicatorStart", "event:>Vehicle>Interior>Indicator>SUB_On"],
+        ["indicatorStop", "event:>Vehicle>Interior>Indicator>SUB_Off"],
+        ["indLoop1", "event:>Vehicle>Interior>Indicator>POL_Click"],
+        ["indLoop2", "event:>Vehicle>Interior>Indicator>POL_Clack"],
+        //lights11
+        ["LightOn", "event:>Vehicle>Interior>Light>POL_Light_On"],
+        ["LightOff", "event:>Vehicle>Interior>Light>POL_Light_Off"],
+        //handbrake2
+        {"node:":"int_pbrk"},
+        ["handbrakeDisengaged","event:>Vehicle>Interior>Handbrake_Electric>Electric_01_Unlock"],
+        ["handbrakeEngaging","event:>Vehicle>Interior>Handbrake_Electric>Electric_01_Lock"],
+        //affects horn location because horn soundscape is loaded after
+        {"node:":"f15"},
+    ],
+    "nodes": [
+         ["id",       "posX", "posY", "posZ"],
+         {"collision":true},
+         {"selfCollision":false},
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         //dashboard
+         {"group":"bastion_dash"},
+         {"nodeWeight":12},
+         ["dshr",    -0.393, -0.60,   0.87],
+         ["dsh",      0.00,  -0.60,   0.87],
+         ["dshl",     0.393, -0.60,   0.87],
+         {"nodeWeight":1},
+         ["int_strw", 0.393, -0.53,   0.90],
+         {"group":""},
+         {"nodeWeight":0.2},
+         ["int_pbrk", 0.05,  -0.23,   0.56],
+         ["int_shft", 0.05,  -0.40,   0.56],
+    ],
+    "torsionbars":[
+       ["id1:", "id2:", "id3:", "id4:"],
+        //rigify the column
+        {"spring":20000, "damp":1, "deform":18000, "strength":28000},
+        ["int_strw", "dshl", "dsh", "f5l"],
+
+    ],
+    "beams":[
+          ["id1:",     "id2:"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+
+          {"deformLimitExpansion":""},
+          {"deformGroup":"display_break","deformationTriggerRatio":0.05},
+          //dash board
+          {"beamSpring":869146.6,"beamDamp":142.73},
+          {"beamDeform":12400,"beamStrength":"FLT_MAX"},
+          {"deformLimitExpansion":""},
+          ["dshr",     "f5r"],
+          ["dshl",     "f5l"],
+          ["dshr",     "f6r"],
+          ["dshl",     "f6l"],
+          ["dshr",     "f1r"],
+          ["dshl",     "f1l"],
+          ["dshr",     "f5rr"],
+          ["dshl",     "f5ll"],
+          ["dshr",     "f6rr"],
+          ["dshl",     "f6ll"],
+          ["dshl",     "dshr"],
+          ["dsh",      "f5r"],
+          ["dsh",      "f5l"],
+          ["dsh",      "f6r"],
+          ["dsh",      "f6l"],
+          ["dsh",      "f1r"],
+          ["dsh",      "f1l"],
+          ["dshl",     "dsh"],
+          ["dshr",     "dsh"],
+          ["dsh",      "int_strw"],
+          ["dshl",     "int_strw"],
+          {"beamSpring":160100,"beamDamp":142.73},
+          {"beamDeform":70300,"beamStrength":"FLT_MAX"},
+          ["int_pbrk", "f5l"],
+          ["int_pbrk", "f5r"],
+          ["int_pbrk", "f2r"],
+          ["int_pbrk", "f2l"],
+          ["int_shft", "f5l"],
+          ["int_shft", "f5r"],
+          ["int_shft", "f2r"],
+          ["int_shft", "f2l"],
+          {"deformGroup":"", "deformationTriggerRatio":""},
+          {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          {"deformLimitExpansion":""},
+    ],
+    "triangles":[
+        ["id1:", "id2:", "id3:"],
+        {"groundModel":"plastic"},
+        //Dashboard
+        {"dragCoef":0},
+        ["dshl", "f6ll", "f5ll"],
+        ["f6ll", "dshl", "f6l"],
+        ["f6l",  "dshl", "dsh"],
+        ["dsh",  "f6r",  "f6l"],
+        ["dsh",  "dshr", "f6r"],
+        ["f6r",  "dshr", "f6rr"],
+        ["dshr", "f5rr", "f6rr"],
+        ["dshl", "f5ll", "f5l"],
+        ["f5l",  "dsh",  "dshl"],
+        ["f5l",  "f5r",  "dsh"],
+        ["dsh",  "f5r",  "dshr"],
+        ["dshr", "f5r",  "f5rr"],
+    ],
+},
+
+"bastion_sunvisors": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Sunvisors",
+        "value":180,
+    },
+    "slotType" : "bastion_sunvisors",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_sunvisor_mounts", ["bastion_body"]],
+    ],
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        ["sunvisor_L_movement","bastion_sunvisor_L","rf1","rf1l","rf2",{"x":0,"y":0,"z":0},{"x":-190,"y":0,"z":0},{"x":0,"y":0,"z":0},0,1,0,1,{"baseRotationGlobal":{"x":0,"y":-3,"z":-7}}],
+        ["sunvisor_R_movement","bastion_sunvisor_R","rf1","rf1r","rf2",{"x":0,"y":0,"z":0},{"x":-190,"y":0,"z":0},{"x":0,"y":0,"z":0},0,1,0,1,{"baseRotationGlobal":{"x":0,"y": 3,"z": 7}}],
+    ],
+    "components": {
+        "electrics": {
+            "customValues": [
+                ["electricsName", "electricsFunction","electricsDefault"],
+                ["sunvisor_L","",0],
+                ["sunvisor_R","",0],
+                ["sunvisor_L_movement","min(1, max(0, electrics.sunvisor_L_movement + electrics.sunvisor_L * dt))",0],
+                ["sunvisor_R_movement","min(1, max(0, electrics.sunvisor_R_movement + electrics.sunvisor_R * dt))",0],
+            ]
+        }
+    },
+    "triggers2":[
+        ["id", "idRef:", "idX:", "idY:", "type", "size", "baseRotation", "rotation", "translation", "baseTranslation"],
+        ["sunvisor_L", "rf1","rf1l","rf2", "box", {"x":0.384, "y":0.03, "z":0.03}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"mesh":"bastion_sunvisor_L", "baseTranslationGlobal":{"x":0.164, "y":-0.282, "z":1.368}}],
+        ["sunvisor_R", "rf1","rf1r","rf2", "box", {"x":0.384, "y":0.03, "z":0.03}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"x":0, "y":0, "z":0}, {"mesh":"bastion_sunvisor_R", "baseTranslationGlobal":{"x":-0.162, "y":-0.279, "z":1.338}}],
+    ],
+    "actionsEnabled": [
+        ["id"],
+        ["sunvisor_L_open"],
+        ["sunvisor_R_open"],
+        ["sunvisor_L_close"],
+        ["sunvisor_R_close"],
+    ],
+    "triggerEventLinks2":[
+        ["triggerId:triggers2", "triggerInput", "inputAction"],
+        ["sunvisor_L", "action0", "sunvisor_L_open"],
+        ["sunvisor_R", "action0", "sunvisor_R_open"],
+        ["sunvisor_L", "action2", "sunvisor_L_close"],
+        ["sunvisor_R", "action2", "sunvisor_R_close"],
+    ],
+},
+"bastion_console": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Center Console",
+        "value":400,
+    },
+    "slotType" : "bastion_console",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_console", ["bastion_dash","bastion_body"]],
+    ],
+},
+"bastion_gauges_luxe": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Standard Gauges",
+        "value":400,
+    },
+    "slotType" : "bastion_gauges",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_gauges", ["bastion_dash"]],
+        ["bastion_decals_gauges_lux", ["bastion_dash"]],
+    ],
+    "glowMap":{
+            "bastion_gauges":{"simpleFunction":{"lowhighbeam":0.49}, "off":"bastion_gauges_luxe", "on":"bastion_gauges_luxe_on"},
+            "bastion_gps_screen":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"bastion_gps_screen", "on_intense":"bastion_gps_screen_dim"},
+            //gauge lights
+            "signal_L":{"simpleFunction":"signal_L", "off":"invis", "on":"bastion_decals_gauges"},
+            "signal_R":{"simpleFunction":"signal_R", "off":"invis", "on":"bastion_decals_gauges"},
+            "esc":{"simpleFunction":{"esc":0.49,"tcs":0.49}, "off":"invis", "on":"bastion_decals_gauges"},
+            "lowhighbeam":{"simpleFunction":"lowhighbeam", "off":"invis", "on":"bastion_decals_gauges"},
+            "highbeam":{"simpleFunction":"highbeam", "off":"invis", "on":"bastion_decals_gauges"},
+            "parkingbrake":{"simpleFunction":"parkingbrakelight", "off":"invis", "on":"bastion_decals_gauges"},
+            "checkengine":{"simpleFunction":"checkengine", "off":"invis", "on":"bastion_decals_gauges"},
+
+            //unused ones
+            "doors":{"simpleFunction":"doors", "off":"invis", "on":"bastion_decals_gauges"},
+            "seatbelt":{"simpleFunction":"seatbelt", "off":"invis", "on":"bastion_decals_gauges"},
+            //disabled
+            "abs":{"simpleFunction":"abs", "off":"invis", "on":"invis"},
+    },
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //needles
+        ["wheelspeed",  "bastion_speedometer_needle", "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-3.5},  {"x":0, "y":0, "z":0},   0, 85, 25, 0.966],
+        ["rpm",    "bastion_tachometer_needle",  "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-0.0215}, {"x":0, "y":0, "z":0},  0, 14000, 4100, 1.8],
+    ],
+},
+"bastion_gauges_sport": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Sport Gauges",
+        "value":400,
+    },
+    "slotType" : "bastion_gauges",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_gauges", ["bastion_dash"]],
+        ["bastion_decals_gauges_sport", ["bastion_dash"]],
+    ],
+    "glowMap":{
+            "bastion_gauges":{"simpleFunction":{"lowhighbeam":0.49}, "off":"bastion_gauges", "on":"bastion_gauges_on"},
+            "bastion_gps_screen":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"bastion_gps_screen", "on_intense":"bastion_gps_screen_dim"},
+            //gauge lights
+            "signal_L":{"simpleFunction":"signal_L", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "signal_R":{"simpleFunction":"signal_R", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "esc":{"simpleFunction":{"esc":0.49,"tcs":0.49}, "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "lowhighbeam":{"simpleFunction":"lowhighbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "highbeam":{"simpleFunction":"highbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "parkingbrake":{"simpleFunction":"parkingbrakelight", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "checkengine":{"simpleFunction":"checkengine", "off":"invis", "on":"bastion_decals_gauges_sport"},
+
+            //unused ones
+            "doors":{"simpleFunction":"doors", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "seatbelt":{"simpleFunction":"seatbelt", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            //disabled
+            "abs":{"simpleFunction":"abs", "off":"invis", "on":"invis"},
+    },
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //needles
+        ["wheelspeed",  "bastion_speedometer_needle", "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-3.5},  {"x":0, "y":0, "z":0},   0, 75, 41, 0.89],
+        ["rpm",    "bastion_tachometer_needle",  "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-0.0215}, {"x":0, "y":0, "z":0},  0, 12000, 6700, 1.67],
+    ],
+},
+"bastion_gauges_sport_red": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Redtail Gauges",
+        "value":400,
+    },
+    "slotType" : "bastion_gauges",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_gauges", ["bastion_dash"]],
+        ["bastion_decals_gauges_sport", ["bastion_dash"]],
+    ],
+    "glowMap":{
+            "bastion_gauges":{"simpleFunction":{"lowhighbeam":0.49}, "off":"bastion_gauges_red", "on":"bastion_gauges_red_on"},
+            "bastion_gps_screen":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"bastion_gps_screen", "on_intense":"bastion_gps_screen_dim"},
+            //gauge lights
+            "signal_L":{"simpleFunction":"signal_L", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "signal_R":{"simpleFunction":"signal_R", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "esc":{"simpleFunction":{"esc":0.49,"tcs":0.49}, "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "lowhighbeam":{"simpleFunction":"lowhighbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "highbeam":{"simpleFunction":"highbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "parkingbrake":{"simpleFunction":"parkingbrakelight", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "checkengine":{"simpleFunction":"checkengine", "off":"invis", "on":"bastion_decals_gauges_sport"},
+
+            //unused ones
+            "doors":{"simpleFunction":"doors", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "seatbelt":{"simpleFunction":"seatbelt", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            //disabled
+            "abs":{"simpleFunction":"abs", "off":"invis", "on":"invis"},
+    },
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //needles
+        ["wheelspeed",  "bastion_speedometer_needle", "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-3.5},  {"x":0, "y":0, "z":0},   0, 80, 37.5, 0.89],
+        ["rpm",    "bastion_tachometer_needle",  "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-0.0215}, {"x":0, "y":0, "z":0},  0, 12000, 6700, 1.67],
+    ],
+},
+"bastion_gauges_sport_white": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Sport GT Gauges",
+        "value":400,
+    },
+    "slotType" : "bastion_gauges",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_gauges", ["bastion_dash"]],
+        ["bastion_decals_gauges_sport", ["bastion_dash"]],
+    ],
+    "glowMap":{
+            "bastion_gauges":{"simpleFunction":{"lowhighbeam":0.49}, "off":"bastion_gauges_white", "on":"bastion_gauges_white_on"},
+            "bastion_gps_screen":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"bastion_gps_screen", "on_intense":"bastion_gps_screen_dim"},
+            //gauge lights
+            "signal_L":{"simpleFunction":"signal_L", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "signal_R":{"simpleFunction":"signal_R", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "esc":{"simpleFunction":{"esc":0.49,"tcs":0.49}, "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "lowhighbeam":{"simpleFunction":"lowhighbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "highbeam":{"simpleFunction":"highbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "parkingbrake":{"simpleFunction":"parkingbrakelight", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "checkengine":{"simpleFunction":"checkengine", "off":"invis", "on":"bastion_decals_gauges_sport"},
+
+            //unused ones
+            "doors":{"simpleFunction":"doors", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "seatbelt":{"simpleFunction":"seatbelt", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            //disabled
+            "abs":{"simpleFunction":"abs", "off":"invis", "on":"invis"},
+    },
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //needles
+        ["wheelspeed",  "bastion_speedometer_needle", "f1l","f1r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-3.5},  {"x":0, "y":0, "z":0},   0, 75, 41, 0.89],
+        ["rpm",    "bastion_tachometer_needle",  "f1l","f1r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-0.0215}, {"x":0, "y":0, "z":0},  0, 12000, 6700, 1.67],
+    ],
+},
+"bastion_gauges_sport_yellow": {
+    "information":{
+        "authors":"BeamNG",
+        "name": {
+            "txt":"ui.vehicleconfig.information.name.BRAND Gauges",
+            "ctx":{
+                "brand1":"ui.vehicleconfig.brand.Battlehawk"
+            }
+        },
+        "value":400,
+    },
+    "slotType" : "bastion_gauges",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_gauges", ["bastion_dash"]],
+        ["bastion_decals_gauges_sport", ["bastion_dash"]],
+    ],
+    "glowMap":{
+            "bastion_gauges":{"simpleFunction":{"lowhighbeam":0.49}, "off":"bastion_gauges_yellow", "on":"bastion_gauges_yellow_on"},
+            "bastion_gps_screen":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"bastion_gps_screen", "on_intense":"bastion_gps_screen_dim"},
+            //gauge lights
+            "signal_L":{"simpleFunction":"signal_L", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "signal_R":{"simpleFunction":"signal_R", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "esc":{"simpleFunction":{"esc":0.49,"tcs":0.49}, "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "lowhighbeam":{"simpleFunction":"lowhighbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "highbeam":{"simpleFunction":"highbeam", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "parkingbrake":{"simpleFunction":"parkingbrakelight", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "checkengine":{"simpleFunction":"checkengine", "off":"invis", "on":"bastion_decals_gauges_sport"},
+
+            //unused ones
+            "doors":{"simpleFunction":"doors", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            "seatbelt":{"simpleFunction":"seatbelt", "off":"invis", "on":"bastion_decals_gauges_sport"},
+            //disabled
+            "abs":{"simpleFunction":"abs", "off":"invis", "on":"invis"},
+    },
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //needles
+        ["wheelspeed",  "bastion_speedometer_needle", "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-3.5},  {"x":0, "y":0, "z":0},   0, 80, 37.5, 0.89],
+        ["rpm",    "bastion_tachometer_needle",  "f5l","f5r","f6l",      {"x":-69.5, "y":0, "z":180}, {"x":0, "y":0, "z":-0.0215}, {"x":0, "y":0, "z":0},  0, 12000, 6700, 1.67],
+    ],
+},
+"bastion_shifter_M": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Manual Shifter",
+        "value":60,
+    },
+    "slotType" : "bastion_shifter",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_shifter_base_M", ["bastion_console", "bastion_body","bastion_shifterbase_M"],[]{"pos":{"x":0,"y":0,"z":0}}],
+        ["bastion_shifter_boot_M", ["bastion_console", "bastion_body","bastion_shifterbase_M","bastion_shifterboot_M"],[]{"pos":{"x":0,"y":0,"z":0}}],
+        ["bastion_shifter_knob_M", ["bastion_shifterknob_M"],[]{"pos":{"x":0,"y":0,"z":0}}],
+    ],
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //pedals
+        ["clutch",    "bastion_pedal_clutch", "f1l","f1r","f5l",         {"x":0, "y":0, "z":180},   {"x":-25, "y":0, "z":0},  {"x":0.0, "y":0, "z":0}, 0, 1, 0,    1],
+        ["brake",     "bastion_pedal_brake",  "f1l","f1r","f5l",         {"x":0, "y":0, "z":180},   {"x":-25, "y":0, "z":0},  {"x":0.0, "y":0, "z":0}, 0, 1, 0,    1],
+    ],
+    "triggers2":[
+      ["id", "idRef:", "idX:", "idY:", "type", "size", "baseRotation", "rotation", "translation", "baseTranslation"],
+      ["parkingBrake","sh_b2l","sh_b2r","sh_b1l","box",{"x":0.05,"y":0.02,"z":0.04},{"x":0,"y":0,"z":0},{"x":0,"y":0,"z":0} {"x":0,"y":0,"z":0},{"x":0.02,"y":-0.06,"z":0.00}, {"color":[1, 0.5, 0, 1]}],
+    ],
+    "triggerEventLinks2":[
+        ["triggerId:triggers2", "triggerInput", "inputAction"],
+        ["parkingBrake", "action0", "common:parkingbrake_toggle"],
+    ],
+    "controller": [
+        ["fileName"],
+        ["propAnimation/hPattern", {"name":"hPattern"}],
+
+    ]
+    "hPattern": {
+        "gearCoordinates": [
+            ["gearIndex",   "x",      "y"]
+            [-1,            -1,       1]
+            [0,             0.0,    -0.0]
+            [1,             -0.65,   0.95]
+            [2,             -0.65,   -1]
+            [3,             0.0,    0.95]
+            [4,             0.0,    -1]
+            [5,             0.65,        0.95]
+            [6,             0.65,        -1]
+        ]
+        "shiftSoundNode:":["sh_b3"]
+        "shiftSoundEventHPatternGearIn": "event:>Vehicle>Interior>Gearshift>manual_modern_06_in",
+        "shiftSoundEventHPatternGearOut": "event:>Vehicle>Interior>Gearshift>manual_modern_06_out",
+        "shiftSoundVolumeHPatternGearIn": 0.5,
+        "shiftSoundVolumeHPatternGearOut": 0.5,
+    },
+    "nodes": [
+         ["id",     "posX", "posY", "posZ"],
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         {"collision":true},
+         {"selfCollision":false},
+         //--SHIFTER---  has to be jbeamed to allow for realistic movement
+         {"group":"bastion_shifterbase_M"},
+         {"nodeWeight":0.45}
+         ["sh_b1l", 0.095, -0.462,  0.56],
+         ["sh_b1r", 0.01,  -0.462,  0.56],
+         ["sh_b2l", 0.095, -0.311,  0.56],
+         ["sh_b2r", 0.01,  -0.311,  0.56],
+
+         ["sh_b3",  0.05,  -0.395,  0.53],
+         {"selfCollision":true},
+         {"group":["bastion_shifterknob_M","bastion_shifterboot_M"]},
+         {"nodeWeight":0.5}
+         ["sh_l3",  0.05,  -0.395,  0.685],
+         {"selfCollision":false},
+         {"nodeWeight":0.30}
+         {"group":"bastion_shifterknob_M"},
+         ["sh_l1l", 0.07,  -0.365,  0.63],
+         ["sh_l1r", 0.03,  -0.365,  0.63],
+         ["sh_l2l", 0.07,  -0.425,  0.63],
+         ["sh_l2r", 0.03,  -0.425,  0.63],
+         {"selfCollision":false},
+         {"collision":true},
+         {"group":""},
+    ],
+    "beams":[
+        ["id1:",   "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //main shape
+        {"beamSpring":401000,"beamDamp":55},
+        {"beamDeform":259000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.1},
+        ["sh_b1l", "sh_b1r"],
+        ["sh_b1l", "sh_b2l"],
+        ["sh_b1l", "sh_b2r"],
+        ["sh_b1r", "sh_b2l"],
+        ["sh_b1r", "sh_b2r"],
+        ["sh_b2l", "sh_b2r"],
+
+        ["sh_b1l", "sh_b3"],
+        ["sh_b1r", "sh_b3"],
+        ["sh_b2l", "sh_b3"],
+        ["sh_b2r", "sh_b3"],
+        //lever
+        {"beamSpring":121000,"beamDamp":35},
+        ["sh_l3",  "sh_l1l"],
+        ["sh_l3",  "sh_l1r"],
+        ["sh_l3",  "sh_l2l"],
+        ["sh_l3",  "sh_l2r"],
+
+        ["sh_l1l", "sh_l1r"],
+        ["sh_l1l", "sh_l2l"],
+        ["sh_l1l", "sh_l2r"],
+
+        ["sh_l1r", "sh_l2l"],
+        ["sh_l1r", "sh_l2r"],
+        ["sh_l2l", "sh_l2r"],
+        //hinge
+        {"beamSpring":121000,"beamDamp":25},
+        ["sh_b3",  "sh_l3"],
+        ["sh_b3",  "sh_l1l"],
+        ["sh_b3",  "sh_l1r"],
+        ["sh_b3",  "sh_l2l"],
+        ["sh_b3",  "sh_l2r"],
+
+        //stabilize the shifter
+        {"beamSpring":0,"beamDamp":175},
+        ["sh_b1l", "sh_l3"],
+        ["sh_b1r", "sh_l3"],
+        ["sh_b2l", "sh_l3"],
+        ["sh_b2r", "sh_l3"],
+        {"breakGroup":""},
+        //attach to body
+        {"beamSpring":300000,"beamDamp":70},
+        {"beamDeform":1000,"beamStrength":"FLT_MAX"},
+        ["sh_b1l", "f7"],
+        ["sh_b1r", "f7"],
+        ["sh_b2l", "f7"],
+        ["sh_b2r", "f7"],
+        ["sh_b3",  "f7"],
+
+        ["sh_b1l", "f2r"],
+        ["sh_b1r", "f2r"],
+        ["sh_b2l", "f2r"],
+        ["sh_b2r", "f2r"],
+        ["sh_b3",  "f2r"],
+
+        ["sh_b1l", "f2l"],
+        ["sh_b1r", "f2l"],
+        ["sh_b2l", "f2l"],
+        ["sh_b2r", "f2l"],
+        ["sh_b3",  "f2l"],
+
+        ["sh_b1l", "f1r"],
+        ["sh_b1r", "f1r"],
+        ["sh_b2l", "f1r"],
+        ["sh_b2r", "f1r"],
+        ["sh_b3",  "f1r"],
+
+        ["sh_b1l", "f1l"],
+        ["sh_b1r", "f1l"],
+        ["sh_b2l", "f1l"],
+        ["sh_b2r", "f1l"],
+        ["sh_b3",  "f1l"],
+        {"beamSpring":200000,"beamDamp":20},
+        ["sh_b1l", "dshr"],
+        ["sh_b1r", "dshr"],
+        ["sh_b2l", "dshr"],
+        ["sh_b2r", "dshr"],
+        ["sh_b3",  "dshr"],
+        ["sh_b1l", "dshl"],
+        ["sh_b1r", "dshl"],
+        ["sh_b2l", "dshl"],
+        ["sh_b2r", "dshl"],
+        ["sh_b3",  "dshl"],
+        //support beams
+        {"beamType":"|SUPPORT","beamPrecompression":0.77,"beamLongBound":2},
+        {"beamSpring":201000,"beamDamp":50},
+        {"beamDeform":16000,"beamStrength":"FLT_MAX"},
+        ["sh_l1r", "sh_b2l"],
+        ["sh_l2r", "sh_b1l"],
+        ["sh_l2l", "sh_b1r"],
+        ["sh_l1l", "sh_b2r"],
+        {"beamPrecompression":0.81}
+        ["sh_l3",  "sh_b1l"],
+        ["sh_l3",  "sh_b1r"],
+        ["sh_l3",  "sh_b2l"],
+        ["sh_l3",  "sh_b2r"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+    ],
+    "torsionHydros": [
+        ["id1:","id2:","id3:","id4:"],
+        {"spring":200, "damp":1, "deform":"FLT_MAX", "strength":1000},
+        ["sh_b2l","sh_b1l","sh_b1r","sh_l3",  {"inputSource":"hPatternAxisY","factor":-0.20}],
+        ["sh_b1r","sh_b1l","sh_b2l","sh_l3",  {"inputSource":"hPatternAxisX","factor":-0.30}],
+        ["sh_b1r","sh_b2r","sh_b2l","sh_l3",  {"inputSource":"hPatternAxisY","factor":0.20}],
+        ["sh_b2l","sh_b2r","sh_b1r","sh_l3",  {"inputSource":"hPatternAxisX","factor":0.30}],
+    ],
+    "torsionbars": [
+        ["id1:", "id2:", "id3:", "id4:"],
+        {"spring":100, "damp":0.2, "deform":30000, "strength":1000},
+        ["sh_b1r", "sh_b3", "sh_l3", "sh_l1r"],
+        ["sh_b2r", "sh_b3", "sh_l3", "sh_l2r"],
+        ["sh_b2l", "sh_b3", "sh_l3", "sh_l2l"],
+        ["sh_b1l", "sh_b3", "sh_l3", "sh_l1l"],
+
+    ],
+},
+"bastion_shifter_A": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Automatic Shifter",
+        "value":150,
+    },
+    "slotType" : "bastion_shifter",
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_shifter_knob_A", ["bastion_shifter_knob_A"],[]{"pos":{"x":0,"y":0,"z":0}}],
+        ["bastion_shifter_boot_A", ["bastion_console", "bastion_shifter_A"],[]{"pos":{"x":0,"y":0,"z":0}}],
+        ["bastion_shifter_base_A", ["bastion_console", "bastion_body","bastion_shifterbase_A"],[]{"pos":{"x":0,"y":0,"z":0}}],
+    ],
+    "props": [
+        ["func",  "mesh",                 "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //pedals
+        ["brake", "bastion_pedal_brake_A", "f1l","f1r","f6l",         {"x":0, "y":0, "z":180},   {"x":-25, "y":0, "z":0},  {"x":0.0, "y":0, "z":0}, 0, 1, 0,    1],
+    ],
+    "triggers2":[
+      ["id", "idRef:", "idX:", "idY:", "type", "size", "baseRotation", "rotation", "translation", "baseTranslation"],
+      ["parkingBrake","sh_b2l","sh_b2r","sh_b1l","box",{"x":0.05,"y":0.02,"z":0.04},{"x":0,"y":0,"z":0},{"x":0,"y":0,"z":0} {"x":0,"y":0,"z":0},{"x":0.02,"y":-0.06,"z":0.00}, {"color":[1, 0.5, 0, 1]}],
+    ],
+    "triggerEventLinks2":[
+        ["triggerId:triggers2", "triggerInput", "inputAction"],
+        ["parkingBrake", "action0", "common:parkingbrake_toggle"],
+    ],
+    "controller": [
+        ["fileName"],
+        ["propAnimation/dualAxisLever", {"name":"dualAxisLever"}],
+    ]
+    "dualAxisLever": {
+        "orderedModeCoordinates": [
+            ["modeName",   "x",      "y"]
+            ["P",            0.0,     0.9]
+            ["R",            0.0,     0.5]
+            ["N",            0.0,     0.0]
+            ["D",            0.0,     -0.5]
+            ["S",            0.0,     -0.9]
+            ["M",            -0.8     -0.5]
+        ]
+        "impulseModeCoordinates": [
+            ["modeName",   "x",      "y"]
+            ["M+",         -0.8,     -0.9]
+            ["M-",         -0.8,     -0.0]
+        ]
+        "modeChanges": [
+            ["mode1",   "mode2",    "intermediateCoordinates"],
+            ["S",       "M",        [{"x":0.0,"y":-0.5}]],
+        ],
+        "moveSoundNode:":["sh_b3"]
+        "moveSoundEvent":  "event:>Vehicle>Interior>Gearshift>manual_modern_09_in",
+        "moveSoundVolume": 0.5,
+        //"demoModes":["M1","M2","M3","M4","M5","M6",]
+        //"demoModes":["P","R", "N", "D","S","M1","M2","M3","M4","M5","M6"]
+        "electricsNameMode":"gear"
+    },
+    "nodes": [
+         ["id",     "posX", "posY", "posZ"],
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         {"collision":true},
+         {"selfCollision":false},
+         //--SHIFTER---  has to be jbeamed to allow for realistic movement
+         {"group":["bastion_shifter_A","bastion_shifterbase_A"]},
+         {"nodeWeight":0.45}
+         ["sh_b1l", 0.095, -0.462,  0.56],
+         ["sh_b1r", 0.01,  -0.462,  0.56],
+         ["sh_b2l", 0.095, -0.311,  0.56],
+         ["sh_b2r", 0.01,  -0.311,  0.56],
+
+         ["sh_b3",  0.05,  -0.395,  0.53],
+         {"selfCollision":true},
+         {"group":["bastion_shifter_A","bastion_shifter_knob_A"]},
+         {"nodeWeight":0.5}
+         ["sh_l3",  0.05,  -0.395,  0.685],
+         {"selfCollision":false},
+         {"nodeWeight":0.30}
+         {"group":"bastion_shifter_knob_A"},
+         ["sh_l1l", 0.07,  -0.365,  0.63],
+         ["sh_l1r", 0.03,  -0.365,  0.63],
+         ["sh_l2l", 0.07,  -0.425,  0.63],
+         ["sh_l2r", 0.03,  -0.425,  0.63],
+         {"selfCollision":false},
+         {"collision":true},
+         {"group":""},
+    ],
+    "beams":[
+        ["id1:",   "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //main shape
+        {"beamSpring":401000,"beamDamp":55},
+        {"beamDeform":259000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.1},
+        ["sh_b1l", "sh_b1r"],
+        ["sh_b1l", "sh_b2l"],
+        ["sh_b1l", "sh_b2r"],
+        ["sh_b1r", "sh_b2l"],
+        ["sh_b1r", "sh_b2r"],
+        ["sh_b2l", "sh_b2r"],
+
+        ["sh_b1l", "sh_b3"],
+        ["sh_b1r", "sh_b3"],
+        ["sh_b2l", "sh_b3"],
+        ["sh_b2r", "sh_b3"],
+        //lever
+        {"beamSpring":121000,"beamDamp":35},
+        ["sh_l3",  "sh_l1l"],
+        ["sh_l3",  "sh_l1r"],
+        ["sh_l3",  "sh_l2l"],
+        ["sh_l3",  "sh_l2r"],
+
+        ["sh_l1l", "sh_l1r"],
+        ["sh_l1l", "sh_l2l"],
+        ["sh_l1l", "sh_l2r"],
+
+        ["sh_l1r", "sh_l2l"],
+        ["sh_l1r", "sh_l2r"],
+        ["sh_l2l", "sh_l2r"],
+        //hinge
+        {"beamSpring":121000,"beamDamp":25},
+        ["sh_b3",  "sh_l3"],
+        ["sh_b3",  "sh_l1l"],
+        ["sh_b3",  "sh_l1r"],
+        ["sh_b3",  "sh_l2l"],
+        ["sh_b3",  "sh_l2r"],
+
+        //stabilize the shifter
+        {"beamSpring":0,"beamDamp":175},
+        ["sh_b1l", "sh_l3"],
+        ["sh_b1r", "sh_l3"],
+        ["sh_b2l", "sh_l3"],
+        ["sh_b2r", "sh_l3"],
+        {"breakGroup":""},
+        //attach to body
+        {"beamSpring":300000,"beamDamp":70},
+        {"beamDeform":1000,"beamStrength":"FLT_MAX"},
+        ["sh_b1l", "f7"],
+        ["sh_b1r", "f7"],
+        ["sh_b2l", "f7"],
+        ["sh_b2r", "f7"],
+        ["sh_b3",  "f7"],
+
+        ["sh_b1l", "f2r"],
+        ["sh_b1r", "f2r"],
+        ["sh_b2l", "f2r"],
+        ["sh_b2r", "f2r"],
+        ["sh_b3",  "f2r"],
+
+        ["sh_b1l", "f2l"],
+        ["sh_b1r", "f2l"],
+        ["sh_b2l", "f2l"],
+        ["sh_b2r", "f2l"],
+        ["sh_b3",  "f2l"],
+
+        ["sh_b1l", "f1r"],
+        ["sh_b1r", "f1r"],
+        ["sh_b2l", "f1r"],
+        ["sh_b2r", "f1r"],
+        ["sh_b3",  "f1r"],
+
+        ["sh_b1l", "f1l"],
+        ["sh_b1r", "f1l"],
+        ["sh_b2l", "f1l"],
+        ["sh_b2r", "f1l"],
+        ["sh_b3",  "f1l"],
+        {"beamSpring":200000,"beamDamp":20},
+        ["sh_b1l", "dshr"],
+        ["sh_b1r", "dshr"],
+        ["sh_b2l", "dshr"],
+        ["sh_b2r", "dshr"],
+        ["sh_b3",  "dshr"],
+        ["sh_b1l", "dshl"],
+        ["sh_b1r", "dshl"],
+        ["sh_b2l", "dshl"],
+        ["sh_b2r", "dshl"],
+        ["sh_b3",  "dshl"],
+        //support beams
+        {"beamType":"|SUPPORT","beamPrecompression":0.77,"beamLongBound":2},
+        {"beamSpring":201000,"beamDamp":50},
+        {"beamDeform":16000,"beamStrength":"FLT_MAX"},
+        ["sh_l1r", "sh_b2l"],
+        ["sh_l2r", "sh_b1l"],
+        ["sh_l2l", "sh_b1r"],
+        ["sh_l1l", "sh_b2r"],
+        {"beamPrecompression":0.81}
+        ["sh_l3",  "sh_b1l"],
+        ["sh_l3",  "sh_b1r"],
+        ["sh_l3",  "sh_b2l"],
+        ["sh_l3",  "sh_b2r"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+    ],
+    "torsionHydros": [
+        ["id1:","id2:","id3:","id4:"],
+        {"spring":200, "damp":1, "deform":"FLT_MAX", "strength":1000},
+        ["sh_b2l","sh_b1l","sh_b1r","sh_l3",  {"inputSource":"dualAxisY","factor":-0.17}],
+        ["sh_b1r","sh_b1l","sh_b2l","sh_l3",  {"inputSource":"dualAxisX","factor":-0.18}],
+        ["sh_b1r","sh_b2r","sh_b2l","sh_l3",  {"inputSource":"dualAxisY","factor": 0.17}],
+        ["sh_b2l","sh_b2r","sh_b1r","sh_l3",  {"inputSource":"dualAxisX","factor": 0.18}],
+    ],
+    "torsionbars": [
+        ["id1:", "id2:", "id3:", "id4:"],
+        {"spring":100, "damp":0.2, "deform":30000, "strength":1000},
+        ["sh_b1r", "sh_b3", "sh_l3", "sh_l1r"],
+        ["sh_b2r", "sh_b3", "sh_l3", "sh_l2r"],
+        ["sh_b2l", "sh_b3", "sh_l3", "sh_l2l"],
+        ["sh_b1l", "sh_b3", "sh_l3", "sh_l1l"],
+    ],
+},
+"bastion_shifter_race_sq": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Sequential Shifter",
+        "value":60,
+    },
+    "slotType" : "bastion_shifter",
+    "slots2":[
+        ["name",                 "allowTypes",             "denyTypes", "default",              "description"],
+        ["bastion_shiftknob_sq", ["bastion_shiftknob_sq"], [],          "bastion_shiftknob_sq", "Shift knob"],
+
+    ],
+    "controller": [
+        ["fileName"],
+        ["propAnimation/sequentialLever", {"name":"sequentialLever"}],
+    ]
+    "sequentialLever": {
+        "shiftSoundNode:":["st_1r"],
+        "shiftSoundEventSequentialGearUp": "event:>Vehicle>Interior>Gearshift>sequential_03_out",
+        "shiftSoundEventSequentialGearDown": "event:>Vehicle>Interior>Gearshift>sequential_03_in",
+        "shiftSoundVolumeSequentialGearUp": 0.5,
+        "shiftSoundVolumeSequentialGearDown": 0.5,
+    }
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["grp_stand_plate", ["bastion_stand"], [], {"pos":{"x": 0.04, "y":-0.36, "z":0.565}, "rot":{"x":0, "y":0, "z":1}, "scale":{"x":1.8, "y":1.5, "z":1.0}}],
+
+    ],
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //pedals
+        ["brake", "bastion_pedal_brake", "f1l","f1r","f6l",         {"x":0, "y":0, "z":180},   {"x":-25, "y":0, "z":0},  {"x":0.0, "y":0, "z":0}, 0, 1, 0,    1],
+        ["clutch",    "bastion_pedal_clutch", "f1l","f1r","f5l",         {"x":0, "y":0, "z":180},   {"x":-25, "y":0, "z":0},  {"x":0.0, "y":0, "z":0}, 0, 1, 0,    1],
+        ["dummy",     "grp_shifter_sq_housing",      "st_1r","st_1l","st_2r",      {"x":90, "y":180, "z":0}, {"x":0, "y":0, "z":0},   {"x":0, "y":0.0, "z":0}, 0, 0, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097}}],
+        ["dummy",     "grp_shifter_sq_cablemount",   "st_1r","st_1l","st_2r",      {"x":90, "y":180, "z":0}, {"x":0, "y":0, "z":0},   {"x":0, "y":0.0, "z":0}, 0, 0, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097}}],
+        ["dummy",     "grp_cable_M",                 "st_1r","st_1l","st_2r",      {"x":90, "y":180, "z":0}, {"x":0, "y":0, "z":0},   {"x":0, "y":0.0, "z":0}, 0, 0, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097}}],
+        ["sequentialLeverY",  "grp_shifter_sq_lever",     "st_1r","st_1l","st_2r",         {"x":90, "y":180, "z":0}, {"x":-10, "y":0, "z":0}, {"x":0, "y":0.0, "z":0}, -1, 1, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097}}],
+        ["sequentialLeverY",  "grp_shifter_sq_rod",       "st_1r","st_1l","st_2r",         {"x":90, "y":180, "z":0}, {"x":0, "y":0, "z":0},   {"x":0, "y":0.06, "z":0}, -1, 1, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.027}}]
+        //sequential handbrake
+        ["dummy",            "grp_hb_body",          "st_1r","st_1l","st_2r",           {"x":90, "y":0, "z":0} , {"x":0, "y":0, "z":0},      {"x":0, "y":0.0, "z":0}, 0, 0, 0, 1, {"baseTranslation":{"x":0.045, "y":0.1, "z":0.0},"optional":true}],
+        ["dummy",            "grp_hb_line_a",          "st_1r","st_1l","st_2r",           {"x":90, "y":0, "z":0} , {"x":0, "y":0, "z":0},      {"x":0, "y":0.0, "z":0}, 0, 0, 0, 1, {"baseTranslation":{"x":0.045, "y":0.1, "z":0.0},"optional":true}],
+        ["dummy",            "grp_hb_boots",         "st_1r","st_1l","st_2r",           {"x":90, "y":0, "z":0} , {"x":0, "y":0, "z":0},      {"x":0, "y":0.0, "z":0}, 0, 0, 0, 1, {"baseTranslation":{"x":0.045, "y":0.1, "z":0.0},"optional":true}],
+        ["parkingbrake",     "grp_hb_lever_a",       "st_1r","st_1l","st_2r",           {"x":90, "y":0, "z":0} , {"x":-20, "y":0, "z":0},    {"x":0, "y":0.0, "z":0}, 0, 1, 0, 1, {"baseTranslation":{"x":0.045, "y":0.165, "z":-0.048},"optional":true}],
+        ["parkingbrake",     "grp_hb_rod1_props",    "st_1r","st_1l","st_2r",           {"x":90, "y":0, "z":0} , {"x":-4, "y":0, "z":0},     {"x":0, "y":0.05, "z":0.005}, 0, 1, 0, 1, {"baseTranslation":{"x":0.045, "y":0.17, "z":-0.068},"optional":true}],
+        ["parkingbrake",     "grp_hb_rod2_props",    "st_1r","st_1l","st_2r",           {"x":90, "y":0, "z":0}, {"x":-2, "y":0, "z":0},      {"x":0, "y":-0.06, "z":0.001}, 0, 1, 0, 1, {"baseTranslation":{"x":0.045, "y":0.17, "z":-0.024},"optional":true}],
+
+    ],
+    "triggers2":[
+      ["id", "idRef:", "idX:", "idY:", "type", "size", "baseRotation", "rotation", "translation", "baseTranslation"],
+      ["parkingBrake","st_1r", "st_1l", "st_2r","box",{"x":0.04,"y":-0.33,"z":0.15},{"x":0,"y":0,"z":0},{"x":0,"y":0,"z":0},{"x":0,"y":0,"z":0},{"x": 0.02,"y":0.145,"z":-0.015}, {"mesh":"grp_hb_lever_a"}],
+    ],
+    "triggerEventLinks2":[
+        ["triggerId:triggers2", "triggerInput", "inputAction"],
+        ["parkingBrake", "action0", "common:parkingbrake_toggle"],
+    ],
+     "nodes": [
+         ["id",    "posX",   "posY",   "posZ"],
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         {"collision":true},
+         {"selfCollision":true},
+         {"group":"bastion_stand"},
+         {"nodeWeight":0.6},
+         ["st_1r",-0.059338,-0.472446, 0.565],
+         ["st_1l", 0.058839,-0.503284, 0.565],
+
+         ["st_2r",-0.0385,  -0.364269, 0.565],
+         {"group":""},
+    ],
+     "beams":[
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //stand main shape
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"beamSpring":282000,"beamDamp":50},
+        {"beamDeform":10000,"beamStrength":"FLT_MAX"},
+        ["st_1r", "st_2r"],
+        ["st_1l", "st_1r"],
+        ["st_1l", "st_2r"],
+        //stand to floor
+        {"beamSpring":282000,"beamDamp":50},
+        {"beamDeform":2000,"beamStrength":40000,"deformLimit":1.5},
+        ["st_1l", "f2r"],
+        ["st_1r", "f2r"],
+        ["st_2r", "f2r"],
+        ["st_1l", "f2l"],
+        ["st_1r", "f2l"],
+        ["st_2r", "f2l"],
+
+        ["st_1l", "f1r"],
+        ["st_1r", "f1r"],
+        ["st_2r", "f1r"],
+        ["st_1l", "f1l"],
+        ["st_1r", "f1l"],
+        ["st_2r", "f1l"],
+
+        ["st_1l", "f5r"],
+        ["st_1r", "f5r"],
+        ["st_1l", "f5l"],
+        ["st_1r", "f5l"],
+
+        ["st_1l", "f7"],
+        ["st_1r", "f7"],
+        ["st_2r", "f7"],
+
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"deformLimitExpansion":""},
+    ],
+},
+"bastion_handbrake_race_a": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Hydraulic Handbrake (Alternative)",
+        "value":60,
+    },
+    "slotType" : "bastion_handbrake_race",
+
+},
+"bastion_shiftknob_sq": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Ball",
+        "value":60,
+    },
+    "slotType" : "bastion_shiftknob_sq",
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //pedals
+        ["sequentialLeverY",     "grp_shifter_knob_a",  "st_1r","st_1l","st_2r",         {"x":90, "y":180, "z":0} , {"x":-10, "y":0, "z":0}    , {"x":0, "y":0.0, "z":0}, -1, 1, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097},"optional":true}],
+    ],
+},
+"bastion_shiftknob_sq_b": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Cylinder",
+        "value":60,
+    },
+    "slotType" : "bastion_shiftknob_sq",
+    "slots2":[
+        ["name",                           "allowTypes",                       "denyTypes", "default",                        "description"],
+        ["bastion_shiftknob_sq_b_padding", ["bastion_shiftknob_sq_b_padding"], [],          "bastion_shiftknob_sq_b_padding", "Shift Padding"],
+
+    ],
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //pedals
+        ["sequentialLeverY",     "grp_shifter_knob_b",  "st_1r","st_1l","st_2r",         {"x":90, "y":180, "z":0} , {"x":-10, "y":0, "z":0}    , {"x":0, "y":0.0, "z":0}, -1, 1, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097},"optional":true}],
+    ],
+},
+"bastion_shiftknob_sq_b_padding": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Padding",
+        "value":60,
+    },
+    "slotType" : "bastion_shiftknob_sq_b_padding",
+    "props": [
+        ["func",       "mesh",               "idRef:", "idX:", "idY:",  "baseRotation",            "rotation",               "translation",          "min", "max", "offset", "multiplier"],
+        //pedals
+        ["sequentialLeverY",     "grp_shifter_knob_b2",  "st_1r","st_1l","st_2r",         {"x":90, "y":180, "z":0} , {"x":-10, "y":0, "z":0}    , {"x":0, "y":0.0, "z":0}, -1, 1, 0, 1, {"baseTranslation":{"x":0.1, "y":0.15, "z":-0.097},"optional":true}],
+    ],
+},
+"bastion_seat_FL": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Driver Seat",
+        "value":900,
+    },
+    "slotType" : "bastion_seat_FL",
+    "slots2": [
+        ["name", "allowTypes", "denyTypes", "default", "description"],
+        ["seat_occupant_FL", ["seat_occupant"], [], "occupant_generic", "Front Left Seat Occupant", {
+            "coreSlot":true,
+            "nodeMove":{"x":0.395,"y":-0.03,"z":0.57},
+            "nodeRotate1":{"x":-10, "y":0, "z":0},
+            "variables": {
+                "$seatID": "FL",
+                "$TriggerHighlightMesh": "bastion_seat_FL",
+                "$occupant_camPitch": 10,
+                "$occupantDragCoef": 1,
+                "$seatAttachmentStrength": "FLT_MAX",
+                "$occupant_attachnodeFL": "sf1ll",
+                "$occupant_attachnodeFR": "sf1l",
+                "$occupant_attachnodeRL": "sf2ll",
+                "$occupant_attachnodeRR": "sf2l",
+                "$occupant_attachnodeTL": "sf3ll",
+                "$occupant_attachnodeTR": "sf3l",
+                "$occupant_attachnodeRigifier": "sf4l"
+            }
+        }],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_seat_FL" ["bastion_seat_FL","bastion_floor"]],
+    ],
+    "camerasInternal":[
+        ["type", "x", "y", "z", "fov", "id1:", "id2:", "id3:", "id4:", "id5:", "id6:"],
+        {"nodeWeight":1.9},
+        {"beamSpring":800,"beamDamp":120},
+        {"selfCollision":true},
+        {"collision":true},
+        //["driver", 0.395, 0.07, 1.23, 55, "f1ll","f1r","f3ll","f3r","f4ll","f4r", {"isInside":true,"beamDeform":5001000,"beamStrength":"FLT_MAX"}],
+    ],
+    "nodes": [
+         ["id",    "posX", "posY", "posZ"],
+         {"collision":true},
+         {"selfCollision":false},
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         //seats flexbody
+         {"group":"bastion_seat_FL"},
+         {"collision":true},
+         {"selfCollision":true},
+         {"nodeWeight":4.5},
+         ["sf1l",  0.145, -0.43,   0.57],
+         ["sf1ll", 0.68,  -0.43,   0.57],
+         ["sf2l",  0.155,  0.10,   0.445, {"selfCollision":false}],
+         ["sf2ll", 0.67,   0.10,   0.445],
+         {"nodeWeight":3.0},
+         ["sf3l",  0.225,  0.25,   1.22],
+         ["sf3ll", 0.60,   0.25,   1.22],
+         ["sf4l",  0.395,  0.613,  1.021, {"collision":false, "selfCollision":false, "group":"", "nodeWeight":1}],
+         {"group":""},
+    ],
+    "beams":[
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //main shape
+        {"beamSpring":251000,"beamDamp":300},
+        {"beamDeform":10000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.2},
+        ["sf1l",  "sf1ll"],
+        ["sf2l",  "sf2ll"],
+        ["sf3l",  "sf3ll"],
+        ["sf1l",  "sf2l"],
+        ["sf2l",  "sf3l"],
+        ["sf1ll", "sf2ll"],
+        ["sf2ll", "sf3ll"],
+        //crossing
+        {"beamDeform":7000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["sf1ll", "sf2l"],
+        ["sf2ll", "sf1l"],
+        ["sf2l",  "sf3ll"],
+        ["sf3l",  "sf2ll"],
+        //corners
+        {"beamDeform":3000},
+        ["sf3l",  "sf1l"],
+        ["sf3ll", "sf1ll"],
+
+        //damper
+        {"beamSpring":0,"beamDamp":400},
+        ["sf3ll", "f9r",   {"dampCutoffHz":500}],
+        ["sf3l",  "f9l",   {"dampCutoffHz":500}],
+
+        //attach
+        {"beamSpring":1500100,"beamDamp":150},
+        {"beamDeform":5000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["sf1l",  "f2l"],
+        ["sf1l",  "f2r"],
+        ["sf1l",  "f2ll"],
+        ["sf1l",  "f1l"],
+        ["sf1ll", "f2ll"],
+        ["sf1ll", "f2l"],
+        ["sf1ll", "f1ll"],
+        ["sf1ll", "f3ll"],
+        ["sf2l",  "f3l"],
+        ["sf2l",  "f3r"],
+        ["sf2l",  "f2l"],
+        ["sf2l",  "f3ll"],
+        ["sf2ll", "f3ll"],
+        ["sf2ll", "f2ll"],
+        ["sf2ll", "f3l"],
+        ["sf2ll", "f2l"],
+        ["sf3l",  "f3l"],
+        ["sf3l",  "f2l"],
+        ["sf3ll", "f3ll"],
+        ["sf3ll", "f2ll"],
+
+        //limiter
+        {"beamType":"|SUPPORT", "beamLongBound":5},
+        {"beamSpring":470000,"beamDamp":141},
+        {"beamPrecompression":0.85},
+        {"beamDeform":6000,"beamStrength":"FLT_MAX"},
+        {"optional":true},
+        //["sf3l", "int7"],
+        ["sf3l",  "p7l"],
+        ["sf3l",  "p8l"],
+        ["sf3l",  "rf2l"],
+        ["sf2l",  "p4l"],
+        ["sf2l",  "p3l"],
+        //["sf1l", "b1ll"],
+        //["sf1l", "b3ll"],
+        ["sf2l",  "f8ll"],
+
+        //to other seat
+        {"beamPrecompression":0.7},
+        ["sf1rr", "sf1ll"],
+        ["sf2rr", "sf2ll"],
+        ["sf3rr", "sf3ll"],
+        {"optional":false},
+        {"beamPrecompression":1},
+
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"deformLimitExpansion":""},
+        //seat back rigifier beams: only to seat back nodes
+        {"optional":false},
+        {"breakGroup":""},
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"beamSpring":251000,"beamDamp":300},
+        {"beamDeform":20000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.2},
+        ["sf4l", "sf2ll"],
+        ["sf4l", "sf2l"],
+        ["sf4l", "sf3ll"],
+        ["sf4l", "sf3l"],
+    ],
+    "triangles":[
+        ["id1:",  "id2:",  "id3:"],
+        {"groundModel":"metal"},
+        {"dragCoef":0},
+        //front seat
+        ["sf2l",  "sf1l",  "sf1ll"],
+        ["sf1ll", "sf2ll", "sf2l"],
+        ["sf3l",  "sf2l",  "sf2ll"],
+        ["sf2ll", "sf3ll", "sf3l"],
+    ],
+},
+"bastion_seat_FR": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Passenger Seat",
+        "value":900,
+    },
+    "slotType" : "bastion_seat_FR",
+    "slots2": [
+        ["name", "allowTypes", "denyTypes", "default", "description"],
+        ["seat_occupant_FR", ["seat_occupant"], [], "occupant_generic", "Front Right Seat Occupant", {
+            "coreSlot":true,
+            "nodeMove":{"x":-0.395,"y":-0.03,"z":0.57},
+            "nodeRotate1":{"x":-10, "y":0, "z":0},
+            "variables": {
+                "$seatID": "FR",
+                "$TriggerHighlightMesh": "bastion_seat_FR",
+                "$occupant_camPitch": 10,
+                "$occupantDragCoef": 1,
+                "$seatAttachmentStrength": "FLT_MAX",
+                "$occupant_attachnodeFL": "sf1r",
+                "$occupant_attachnodeFR": "sf1rr",
+                "$occupant_attachnodeRL": "sf2r",
+                "$occupant_attachnodeRR": "sf2rr",
+                "$occupant_attachnodeTL": "sf3r",
+                "$occupant_attachnodeTR": "sf3rr",
+                "$occupant_attachnodeRigifier": "sf4r"
+            }
+        }],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_seat_FR" ["bastion_seat_FR","bastion_floor"]],
+    ],
+    "nodes": [
+         ["id",    "posX", "posY", "posZ"],
+         {"collision":true},
+         {"selfCollision":false},
+         {"frictionCoef":0.5},
+         {"nodeMaterial":"|NM_METAL"},
+         //seats flexbody
+         {"group":"bastion_seat_FR"},
+         {"collision":true},
+         {"selfCollision":true},
+         {"nodeWeight":4.5},
+         ["sf1r", -0.145, -0.43,   0.57],
+         ["sf1rr",-0.68,  -0.43,   0.57],
+         ["sf2r", -0.155,  0.10,   0.445, {"selfCollision":false}],
+         ["sf2rr",-0.67,   0.10,   0.445],
+         {"nodeWeight":3.0},
+         ["sf3r", -0.225,  0.25,   1.22],
+         ["sf3rr",-0.60,   0.25,   1.22],
+         ["sf4r", -0.395,  0.613,  1.021, {"collision":false, "selfCollision":false, "group":"", "nodeWeight":1}],
+         {"group":""},
+    ],
+    "beams":[
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //main shape
+        {"beamSpring":251000,"beamDamp":300},
+        {"beamDeform":10000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.2},
+        ["sf1r",  "sf1rr"],
+        ["sf2r",  "sf2rr"],
+        ["sf3r",  "sf3rr"],
+        ["sf1r",  "sf2r"],
+        ["sf2r",  "sf3r"],
+        ["sf1rr", "sf2rr"],
+        ["sf2rr", "sf3rr"],
+        //crossing
+        {"beamDeform":7000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["sf1rr", "sf2r"],
+        ["sf2rr", "sf1r"],
+        ["sf2r",  "sf3rr"],
+        ["sf3r",  "sf2rr"],
+        //corners
+        {"beamDeform":3000},
+        ["sf3r",  "sf1r"],
+        ["sf3rr", "sf1rr"],
+
+        //damper
+        {"beamSpring":0,"beamDamp":400},
+        ["sf3rr", "f9l",   {"dampCutoffHz":500}],
+        ["sf3r",  "f9r",   {"dampCutoffHz":500}],
+
+        //attach
+        {"beamSpring":1500100,"beamDamp":150},
+        {"beamDeform":5000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["sf1r",  "f2r"],
+        ["sf1r",  "f2l"],
+        ["sf1r",  "f2rr"],
+        ["sf1r",  "f1r"],
+        ["sf1rr", "f2rr"],
+        ["sf1rr", "f2r"],
+        ["sf1rr", "f1rr"],
+        ["sf1rr", "f3rr"],
+        ["sf2r",  "f3r"],
+        ["sf2r",  "f3l"],
+        ["sf2r",  "f2r"],
+        ["sf2r",  "f3rr"],
+        ["sf2rr", "f3rr"],
+        ["sf2rr", "f2rr"],
+        ["sf2rr", "f3r"],
+        ["sf2rr", "f2r"],
+        ["sf3r",  "f3r"],
+        ["sf3r",  "f2r"],
+        ["sf3rr", "f3rr"],
+        ["sf3rr", "f2rr"],
+
+        //limiter
+        {"beamType":"|SUPPORT", "beamLongBound":5},
+        {"beamSpring":470000,"beamDamp":141},
+        {"beamPrecompression":0.85},
+        {"beamDeform":6000,"beamStrength":"FLT_MAX"},
+        {"optional":true},
+        //["sf3r", "int7"],
+        ["sf3r",  "p7r"],
+        ["sf3r",  "p8r"],
+        ["sf3r",  "rf2r"],
+        ["sf2r",  "p4r"],
+        ["sf2r",  "p3r"],
+        ["sf2r",  "f8rr"],
+        //["sf1r", "b1rr"],
+        //["sf1r", "b3rr"],
+        //to other seat
+        {"beamPrecompression":0.7},
+        //["sf1rr", "sf1ll"],
+        //["sf2rr", "sf2ll"],
+        //["sf3rr", "sf3ll"],
+        {"optional":false},
+        {"beamPrecompression":1},
+
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"deformLimitExpansion":""},
+        //seat back rigifier beams: only to seat back nodes
+        {"optional":false},
+        {"breakGroup":""},
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"beamSpring":251000,"beamDamp":300},
+        {"beamDeform":20000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":1.2},
+        ["sf4r", "sf2r"],
+        ["sf4r", "sf2rr"],
+        ["sf4r", "sf3r"],
+        ["sf4r", "sf3rr"],
+    ],
+    "triangles":[
+        ["id1:",  "id2:",  "id3:"],
+        {"groundModel":"metal"},
+        {"dragCoef":0},
+        //front seat
+        ["sf1r",  "sf2r",  "sf1rr"],
+        ["sf2rr", "sf1rr", "sf2r"],
+        ["sf2r",  "sf3r",  "sf2rr"],
+        ["sf3rr", "sf2rr", "sf3r"],
+    ],
+},
+"bastion_race_seat_FL": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Front Left Race Seat Base",
+        "value":10,
+    },
+    "slotType" : "bastion_seat_FL",
+    "slots2": [
+        ["name",         "allowTypes",     "denyTypes", "default",         "description"],
+        ["race_seat_FL", ["racing_seat"],  [],          "seat_race_gray",  "Front Left Race Seat", {"nodeMove":{"x":0.395, "y":-0.08, "z":0.35}, "variables":{"$seatID":"FL"}}],
+    ],
+    "camerasInternal":[
+        ["type", "x", "y", "z", "fov", "id1:", "id2:", "id3:", "id4:", "id5:", "id6:"],
+        {"nodeWeight":1.9},
+        {"beamSpring":800,"beamDamp":120},
+        {"selfCollision":true},
+        {"collision":true},
+        //["driver", 0.395, 0.09, 1.20, 55, "f1ll","f1r","f3ll","f3r","f4ll","f4r", {"isInside":true,"beamDeform":5001000,"beamStrength":"FLT_MAX"}],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["racingseat_base" ["seat_race_FL","bastion_floor"],[],{"pos":{"x":0.395,"y":-0.12,"z":0.35}, "scale":{"x":1.0, "y":1.25, "z":1.2}}],
+    ],
+    "beams":[
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //main shape
+        {"beamSpring":2501000,"beamDamp":300},
+        {"beamDeform":9000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        {"optional":true},
+
+        //damper
+        {"beamSpring":0,"beamDamp":800},
+        ["seatGeneric3r_FL", "tb3ll"],
+        ["seatGeneric3l_FL", "tb2ll"],
+
+        //attach
+        {"beamSpring":1001000,"beamDamp":150},
+        {"beamDeform":5000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["seatGeneric1l_FL", "f2l"],
+        ["seatGeneric1l_FL", "f2r"],
+        ["seatGeneric1l_FL", "f2ll"],
+        ["seatGeneric1l_FL", "f1l"],
+        ["seatGeneric1r_FL", "f2ll"],
+        ["seatGeneric1r_FL", "f2l"],
+        ["seatGeneric1r_FL", "f1ll"],
+        ["seatGeneric1r_FL", "f3ll"],
+        ["seatGeneric2l_FL", "f3l"],
+        ["seatGeneric2l_FL", "f3r"],
+        ["seatGeneric2l_FL", "f2l"],
+        ["seatGeneric2l_FL", "f3ll"],
+        ["seatGeneric2r_FL", "f3ll"],
+        ["seatGeneric2r_FL", "f2ll"],
+        ["seatGeneric2r_FL", "f3l"],
+        ["seatGeneric2r_FL", "f2l"],
+        ["seatGeneric3l_FL", "f3l"],
+        ["seatGeneric3l_FL", "f2l"],
+        ["seatGeneric3r_FL", "f3ll"],
+        ["seatGeneric3r_FL", "f2ll"],
+
+        //limiter
+        {"beamType":"|SUPPORT", "beamLongBound":5},
+        {"beamSpring":470000,"beamDamp":141},
+        {"beamPrecompression":0.85},
+        {"beamDeform":6000,"beamStrength":"FLT_MAX"},
+        {"optional":true},
+        //["seatGeneric3l_FL", "int7"],
+        ["seatGeneric3l_FL", "p7l"],
+        ["seatGeneric3l_FL", "p8l"],
+        ["seatGeneric3l_FL", "rf2l"],
+        ["seatGeneric2l_FL", "p4l"],
+        ["seatGeneric2l_FL", "p3l"],
+        ["seatGeneric2l_FL", "f8ll"],
+        //["seatGeneric1l_FL", "b1ll"],
+        //["seatGeneric1l_FL", "b3ll"],
+        //to other seat
+        {"beamPrecompression":0.7},
+        //["seatGeneric1r_FL", "seatGeneric1r_FL"],
+        //["seatGeneric2r_FL", "seatGeneric2r_FL"],
+        //["seatGeneric3r_FL", "seatGeneric3r_FL"],
+        {"optional":false},
+        {"beamPrecompression":1},
+
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"deformLimitExpansion":""},
+    ],
+},
+"bastion_race_seat_FR": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Front Right Race Seat Base",
+        "value":10,
+    },
+    "slotType" : "bastion_seat_FR",
+    "slots2": [
+        ["name",         "allowTypes",     "denyTypes", "default",         "description"],
+        ["race_seat_FR", ["racing_seat"],  [],          "seat_race_gray",  "Front Right Race Seat", {"nodeMove":{"x":-0.395, "y":-0.08, "z":0.35}, "variables":{"$seatID":"FR"}}],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["racingseat_base" ["seat_race_FR","bastion_floor"],[],{"pos":{"x":-0.395,"y":-0.12,"z":0.35}, "scale":{"x":1.0, "y":1.25, "z":1.2}}],
+    ],
+    "beams":[
+        ["id1:",  "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        //main shape
+        {"beamSpring":2501000,"beamDamp":300},
+        {"beamDeform":9000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        {"optional":true},
+
+        //damper
+        {"beamSpring":0,"beamDamp":800},
+        ["seatGeneric3l_FR", "tb3rr"],
+        ["seatGeneric3r_FR", "tb2rr"],
+
+        //attach
+        {"beamSpring":1001000,"beamDamp":150},
+        {"beamDeform":5000,"beamStrength":"FLT_MAX"},
+        {"deformLimitExpansion":""},
+        ["seatGeneric1r_FR", "f2r"],
+        ["seatGeneric1r_FR", "f2l"],
+        ["seatGeneric1r_FR", "f2rr"],
+        ["seatGeneric1r_FR", "f1r"],
+        ["seatGeneric1l_FR", "f2rr"],
+        ["seatGeneric1l_FR", "f2r"],
+        ["seatGeneric1l_FR", "f1rr"],
+        ["seatGeneric1l_FR", "f3rr"],
+        ["seatGeneric2r_FR", "f3r"],
+        ["seatGeneric2r_FR", "f3l"],
+        ["seatGeneric2r_FR", "f2r"],
+        ["seatGeneric2r_FR", "f3rr"],
+        ["seatGeneric2l_FR", "f3rr"],
+        ["seatGeneric2l_FR", "f2rr"],
+        ["seatGeneric2l_FR", "f3r"],
+        ["seatGeneric2l_FR", "f2r"],
+        ["seatGeneric3r_FR", "f3r"],
+        ["seatGeneric3r_FR", "f2r"],
+        ["seatGeneric3l_FR", "f3rr"],
+        ["seatGeneric3l_FR", "f2rr"],
+
+        //limiter
+        {"beamType":"|SUPPORT", "beamLongBound":5},
+        {"beamSpring":470000,"beamDamp":141},
+        {"beamPrecompression":0.85},
+        {"beamDeform":6000,"beamStrength":"FLT_MAX"},
+        {"optional":true},
+        //["seatGeneric3r_FR", "int7"],
+        ["seatGeneric3r_FR", "p7r"],
+        ["seatGeneric3r_FR", "p8r"],
+        ["seatGeneric3r_FR", "rf2r"],
+        ["seatGeneric2r_FR", "p4r"],
+        ["seatGeneric2r_FR", "p3r"],
+        ["seatGeneric2r_FR", "f8rr"],
+        //["seatGeneric1r_FR", "b1rr"],
+        //["seatGeneric1r_FR", "b3rr"],
+        //to other seat
+        {"beamPrecompression":0.7},
+        //["seatGeneric1l_FR", "seatGeneric1r_FL"],
+        //["seatGeneric2l_FR", "seatGeneric2r_FL"],
+        //["seatGeneric3l_FR", "seatGeneric3r_FL"],
+        {"optional":false},
+        {"beamPrecompression":1},
+
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"deformLimitExpansion":""},
+    ],
+},
+"bastion_seats_R": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Rear Seats",
+        "value":650,
+    },
+    "slotType" : "bastion_seats_R",
+    "slots2": [
+        ["name", "allowTypes", "denyTypes", "default", "description"],
+        ["bastion_seats_R_space", ["bastion_seats_R_space"], [], "bastion_seats_R_occupants", "Rear Seat Space", {"coreSlot":true}],
+    ],
+    "flexbodies": [
+        ["mesh", "[group]:", "nonFlexMaterials"],
+        ["bastion_seats_R", ["bastion_seats_R"]],
+    ],
+    "nodes":[
+          ["id",     "posX", "posY", "posZ"],
+          {"group":"bastion_seats_R"},
+          {"collision":true},
+          {"selfCollision":true},
+          {"nodeWeight":1.5},
+          ["srsp1r", -0.65, 0.60, 0.58],
+          ["sr1",     0.00, 0.60, 0.58],
+          ["srsp1l",  0.65, 0.60, 0.58],
+          {"selfCollision":false},
+          ["sr2rr",  -0.70, 1.08, 0.53],
+          ["sr2",     0.00, 1.08, 0.53],
+          ["sr2ll",   0.70, 1.08, 0.53],
+          {"selfCollision":true},
+          ["sr3rr",  -0.56, 1.30, 1.20],
+          ["sr3",     0.00, 1.30, 1.20],
+          ["sr3ll",   0.56, 1.30, 1.20],
+          ["sr4l",    0.395, 1.645, 1.028, {"collision":false, "selfCollision":false, "group":"", "nodeWeight":1}],
+          ["sr4r",   -0.395, 1.645, 1.028, {"collision":false, "selfCollision":false, "group":"", "nodeWeight":1}],
+          {"group":""},
+    ],
+    "beams":[
+          ["id1:",        "id2:"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          //main shape
+          {"beamSpring":201000,"beamDamp":300},
+          {"beamDeform":10000,"beamStrength":"FLT_MAX"},
+          {"deformLimitExpansion":1.2},
+          ["sr3rr",       "sr3"],
+          ["sr3",         "sr3ll"],
+          ["sr2rr",       "sr2"],
+          ["sr2",         "sr2ll"],
+          ["srsp1l",      "sr1"],
+          ["sr1",         "srsp1r"],
+          ["sr2rr",       "sr3rr"],
+          ["sr3",         "sr2"],
+          ["sr3ll",       "sr2ll"],
+          ["sr2ll",       "srsp1l"],
+          ["sr1",         "sr2"],
+          ["srsp1r",      "sr2rr"],
+          //crossing
+          {"beamDeform":7000,"beamStrength":"FLT_MAX"},
+          {"deformLimitExpansion":""},
+          ["sr3",         "sr2ll"],
+          ["sr2",         "sr3ll"],
+          ["sr3",         "sr2rr"],
+          ["sr2",         "sr3rr"],
+          ["sr1",         "sr2rr"],
+          ["sr2",         "srsp1r"],
+          ["sr1",         "sr2ll"],
+          ["sr2",         "srsp1l"],
+          //corner
+          {"beamDeform":3000,"beamStrength":"FLT_MAX"},
+          ["sr3rr",       "srsp1r"],
+          ["sr3",         "sr1"],
+          ["sr3ll",       "srsp1l"],
+
+          //damper
+          {"beamSpring":0,"beamDamp":800},
+          //["sr3ll", "tb3ll"],
+          //["sr3rr", "tb3rr"],
+          //["sr3", "tb3rr"],
+          //["sr3", "tb3ll"],
+
+          //attach
+          {"beamSpring":1001000,"beamDamp":150},
+          {"beamDeform":5000,"beamStrength":"FLT_MAX"},
+          {"deformLimitExpansion":""},
+          ["srsp1l",      "f3ll"],
+          ["srsp1l",      "f4ll"],
+          ["srsp1l",      "f3l"],
+          ["srsp1l",      "f4l"],
+          ["sr2ll",       "f4ll"],
+          ["sr2ll",       "f4l"],
+          ["sr2ll",       "f3ll"],
+          ["sr2ll",       "f3l"],
+
+          ["srsp1r",      "f3rr"],
+          ["srsp1r",      "f4rr"],
+          ["srsp1r",      "f3r"],
+          ["srsp1r",      "f4r"],
+          ["sr2rr",       "f4rr"],
+          ["sr2rr",       "f4r"],
+          ["sr2rr",       "f3rr"],
+          ["sr2rr",       "f3r"],
+
+          ["sr1",         "f3l"],
+          ["sr1",         "f3r"],
+          ["sr2",         "f4l"],
+          ["sr2",         "f4r"],
+          ["sr3",         "f4l"],
+          ["sr3",         "f4r"],
+          ["sr3ll",       "f4ll"],
+          ["sr3ll",       "f4l"],
+          ["sr3rr",       "f4rr"],
+          ["sr3rr",       "f4r"],
+          {"beamSpring":401000,"beamDamp":150},
+          ["sr1",         "f4l"],
+          ["sr1",         "f4r"],
+          ["sr2",         "f3l"],
+          ["sr2",         "f3r"],
+          //stronger floor mount
+          ["sr2ll",       "rsp1l"],
+          ["sr2",         "r1"],
+          ["sr2rr",       "rsp1r"],
+          //rear seat upper corner bracing for anti wiggle wiggle
+          {"beamSpring":101000,"beamDamp":150},
+          ["sr3ll",       "f3ll"],
+          ["sr3ll",       "f3l"],
+          ["sr3",         "f3l"],
+          ["sr3",         "f3r"],
+          ["sr3rr",       "f3r"],
+          ["sr3rr",       "f3rr"],
+
+
+          //limiter
+          {"beamType":"|SUPPORT", "beamLongBound":5},
+          {"beamSpring":470000,"beamDamp":141},
+          {"beamPrecompression":0.9},
+          {"beamDeform":6000,"beamStrength":"FLT_MAX"},
+          //{"optional":true},
+          ["sr3ll",       "p10l"],
+          ["sr3ll",       "q1l"],
+          ["sr2ll",       "q5l"],
+          ["sr2ll",       "f9ll"],
+
+          ["sr3rr",       "p10r"],
+          ["sr3rr",       "q1r"],
+          ["sr2rr",       "q5r"],
+          ["sr2rr",       "f9rr"],
+
+          {"beamPrecompression":0.7},
+          ["rsp1l",       "sr2ll"],
+          ["r1",          "sr2"],
+          ["rsp1r",       "sr2rr"],
+          ["rsp1r",       "sr3rr"],
+          ["r1",          "sr3"],
+          ["rsp1l",       "sr3ll"],
+          {"optional":false},
+          {"beamPrecompression":1},
+
+          {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          {"deformLimitExpansion":1.2},
+          //seat back rigifier beams: only to seat back nodes
+          {"optional":false},
+          {"breakGroup":""},
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          {"beamSpring":201000,"beamDamp":300},
+          {"beamDeform":20000,"beamStrength":"FLT_MAX"},
+          {"deformLimitExpansion":1.2},
+          ["sr4l", "sr2ll"],
+          ["sr4l", "sr2"],
+          ["sr4l", "sr3ll"],
+          ["sr4l", "sr3"],
+          ["sr4r", "sr2"],
+          ["sr4r", "sr2rr"],
+          ["sr4r", "sr3"],
+          ["sr4r", "sr3rr"],
+    ],
+    "triangles":[
+        ["id1:",   "id2:",   "id3:"],
+        {"groundModel":"metal"},
+        {"dragCoef":0},
+        ["sr3rr",  "sr2rr",  "sr2"],
+        ["sr2",    "sr3",    "sr3rr"],
+        ["sr2rr",  "srsp1r", "sr1"],
+        ["sr1",    "sr2",    "sr2rr"],
+        ["sr2",    "sr1",    "srsp1l"],
+        ["srsp1l", "sr2ll",  "sr2"],
+        ["sr2ll",  "sr3ll",  "sr3"],
+        ["sr3",    "sr2",    "sr2ll"],
+    ],
+},
+"bastion_seats_R_occupants": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Rear Seat Occupants Space",
+        "value":0,
+    },
+    "slotType" : "bastion_seats_R_space",
+    "slots2": [
+        ["name", "allowTypes", "denyTypes", "default", "description"],
+        ["seat_occupant_RL", ["seat_occupant"], [], "occupant_generic", "Rear Left Seat Occupant", {
+            "coreSlot":true,
+            "nodeMove":{"x":0.395,"y":0.925,"z":0.62},
+            "nodeRotate1":{"x":-15, "y":0, "z":0},
+            "variables": {
+                "$seatID": "RL",
+                "$TriggerHighlightMesh": "bastion_seats_R",
+                "$occupant_camPitch": 15,
+                "$occupantDragCoef": 1,
+                "$seatAttachmentStrength": "FLT_MAX",
+                "$occupant_attachnodeFL": "srsp1l",
+                "$occupant_attachnodeFR": "sr1",
+                "$occupant_attachnodeRL": "sr2ll",
+                "$occupant_attachnodeRR": "sr2",
+                "$occupant_attachnodeTL": "sr3ll",
+                "$occupant_attachnodeTR": "sr3",
+                "$occupant_attachnodeRigifier": "sr4l"
+            }
+        }],
+        ["seat_occupant_RR", ["seat_occupant"], [], "occupant_generic", "Rear Right Seat Occupant", {
+            "coreSlot":true,
+            "nodeMove":{"x":-0.395,"y":0.925,"z":0.62},
+            "nodeRotate1":{"x":-15, "y":0, "z":0},
+            "variables": {
+                "$seatID": "RR",
+                "$TriggerHighlightMesh": "bastion_seats_R",
+                "$occupant_camPitch": 15,
+                "$occupantDragCoef": 1,
+                "$seatAttachmentStrength": "FLT_MAX",
+                "$occupant_attachnodeFL": "sr1",
+                "$occupant_attachnodeFR": "srsp1r",
+                "$occupant_attachnodeRL": "sr2",
+                "$occupant_attachnodeRR": "sr2rr",
+                "$occupant_attachnodeTL": "sr3",
+                "$occupant_attachnodeTR": "sr3rr",
+                "$occupant_attachnodeRigifier": "sr4r"
+            }
+        }],
+    ],
+},
+"bastion_seats_R_cargo": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Rear Seat Cargo Load",
+        "value":0,
+    },
+    "slotType" : "bastion_seats_R_space",
+    "slots2": [
+        ["name", "allowTypes", "denyTypes", "default", "description"],
+        ["load_seat_R_3", ["load_seat_R_3"], [], "", "Rear Seat Load", {
+            "nodeMove":{"x": 0.00, "y":0.76, "z":0.69},
+            "variables":{
+                "$rotx":-10, "$roty":0, "$rotz":90,
+                "$offsetX":0.36, "$group":"bastion_seats_R",
+            },
+        }],
+    ],
+    "beams":[
+          ["id1:",        "id2:"],
+          {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+
+          //cargo load box
+          {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          {"beamSpring":500001,"beamDamp":250},
+          {"beamDeform":510000,"beamStrength":"FLT_MAX"},
+          {"optional":true},
+          ["seat_box_RA", "sr1"],
+          ["seat_box_RA", "srsp1l"],
+          ["seat_box_RA", "sr2"],
+          ["seat_box_RA", "sr2ll"],
+          ["seat_box_RA", "sr3"],
+          ["seat_box_RA", "sr3ll"],
+          ["seat_box_RB", "srsp1r"],
+          ["seat_box_RB", "srsp1l"],
+          ["seat_box_RB", "sr2rr"],
+          ["seat_box_RB", "sr2ll"],
+          ["seat_box_RB", "sr3rr"],
+          ["seat_box_RB", "sr3ll"],
+          ["seat_box_RC", "srsp1r"],
+          ["seat_box_RC", "sr1"],
+          ["seat_box_RC", "sr2rr"],
+          ["seat_box_RC", "sr2"],
+          ["seat_box_RC", "sr3rr"],
+          ["seat_box_RC", "sr3"],
+          {"optional":false},
+          {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+          {"deformLimitExpansion":1.2},
+    ],
+},
+"bastion_seats_R_cargo_load_floor": {
+    "information":{
+        "authors":"BeamNG",
+        "name":"Cargo Box Slots",
+        "value":0,
+    },
+    "slotType" : "bastion_seats_R",
+    "slots2": [
+        ["name",                      "allowTypes",                  "denyTypes", "default",                   "description"],
+        ["cargo_load_box_M_seats_RA", ["cargo_load_box_M_seats_RA"], [],          "cargo_load_box_M_seats_RA", {"txt":"ui.vehicleconfig.generic.numberedSlotName","ctx":{"name":"ui.vehicleconfig.slot.description.Cargo Box M","number":"A"}}, {"nodeMove":{"x": 0.30, "y":0.55, "z":1.05},"variables":{"$group":"bastion_body", "$strapScale":0.85}}],
+        ["cargo_load_box_M_seats_RB", ["cargo_load_box_M_seats_RB"], [],          "cargo_load_box_M_seats_RB", {"txt":"ui.vehicleconfig.generic.numberedSlotName","ctx":{"name":"ui.vehicleconfig.slot.description.Cargo Box M","number":"B"}}, {"nodeMove":{"x": 0.30, "y":0.85, "z":1.05},"variables":{"$group":"bastion_body", "$strapScale":0.85}}],
+        ["cargo_load_box_M_seats_RC", ["cargo_load_box_M_seats_RC"], [],          "cargo_load_box_M_seats_RC", {"txt":"ui.vehicleconfig.generic.numberedSlotName","ctx":{"name":"ui.vehicleconfig.slot.description.Cargo Box M","number":"C"}}, {"nodeMove":{"x":-0.30, "y":0.55, "z":1.05},"variables":{"$group":"bastion_body", "$strapScale":0.85}}],
+        ["cargo_load_box_M_seats_RD", ["cargo_load_box_M_seats_RD"], [],          "cargo_load_box_M_seats_RD", {"txt":"ui.vehicleconfig.generic.numberedSlotName","ctx":{"name":"ui.vehicleconfig.slot.description.Cargo Box M","number":"D"}}, {"nodeMove":{"x":-0.30, "y":0.85, "z":1.05},"variables":{"$group":"bastion_body", "$strapScale":0.85}}],
+        ["cargo_load_box_L_seats_RE", ["cargo_load_box_L_seats_RE"], [],          "cargo_load_box_L_seats_RE", {"txt":"ui.vehicleconfig.generic.numberedSlotName","ctx":{"name":"ui.vehicleconfig.slot.description.Cargo Box L","number":"E"}}, {"nodeMove":{"x": 0.32, "y":0.70, "z":0.80}, "variables":{"$group":"bastion_body"}}],
+        ["cargo_load_box_L_seats_RF", ["cargo_load_box_L_seats_RF"], [],          "cargo_load_box_L_seats_RF", {"txt":"ui.vehicleconfig.generic.numberedSlotName","ctx":{"name":"ui.vehicleconfig.slot.description.Cargo Box L","number":"F"}}, {"nodeMove":{"x":-0.32, "y":0.70, "z":0.80}, "variables":{"$group":"bastion_body"}}],
+    ],
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["cargo_support_box", ["bastion_body"],[],{"pos":{"x": 0.38,  "y":0.45, "z":0.28}, "rot":{"x":0, "y":0, "z":0}, "scale":{"x":2.9, "y":3, "z":3.4}}],
+         ["cargo_support_box", ["bastion_body"],[],{"pos":{"x":-0.38,  "y":0.45, "z":0.28}, "rot":{"x":0, "y":0, "z":0}, "scale":{"x":2.9, "y":3, "z":3.4}}],
+         ["cargo_support_box", ["bastion_body"],[],{"pos":{"x": 0.32,  "y":0.95, "z":0.485}, "rot":{"x":0, "y":0, "z":0}, "scale":{"x":3.5, "y":1, "z":0.8}}],
+         ["cargo_support_box", ["bastion_body"],[],{"pos":{"x":-0.32,  "y":0.95, "z":0.485}, "rot":{"x":0, "y":0, "z":0}, "scale":{"x":3.5, "y":1, "z":0.8}}],
+    ],
+    "beams":[
+        ["id1:",           "id2:"],
+        {"beamPrecompression":1, "beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+
+        //attach
+        {"beamSpring":1501000,"beamDamp":30},
+        {"beamDeform":20000,"beamStrength":"FLT_MAX"},
+
+        ["seat_box_RA_0",  "f4l"],
+        ["seat_box_RA_0",  "f4ll"],
+        ["seat_box_RA_0",  "f3l"],
+        ["seat_box_RA_8",  "f4l"],
+        ["seat_box_RA_8",  "f4ll"],
+        ["seat_box_RA_8",  "f3l"],
+        ["seat_box_RA_8",  "f4r"],
+        ["seat_box_RA_8",  "f4rr"],
+        ["seat_box_RA_8",  "f3r"],
+        ["seat_box_RA_2",  "f4r"],
+        ["seat_box_RA_2",  "f4rr"],
+        ["seat_box_RA_2",  "f3r"],
+        ["seat_box_RA_9",  "f4r"],
+        ["seat_box_RA_9",  "f4rr"],
+        ["seat_box_RA_9",  "f3r"],
+        ["seat_box_RA_12", "f4r"],
+        ["seat_box_RA_12", "f4rr"],
+        ["seat_box_RA_12", "f3r"],
+
+        ["seat_box_RB_0",  "f4l"],
+        ["seat_box_RB_0",  "f4ll"],
+        ["seat_box_RB_0",  "f3l"],
+        ["seat_box_RB_8",  "f4l"],
+        ["seat_box_RB_8",  "f4ll"],
+        ["seat_box_RB_8",  "f3l"],
+        ["seat_box_RB_8",  "f4r"],
+        ["seat_box_RB_8",  "f4rr"],
+        ["seat_box_RB_8",  "f3r"],
+        ["seat_box_RB_2",  "f4r"],
+        ["seat_box_RB_2",  "f4rr"],
+        ["seat_box_RB_2",  "f3r"],
+        ["seat_box_RB_9",  "f4r"],
+        ["seat_box_RB_9",  "f4rr"],
+        ["seat_box_RB_9",  "f3r"],
+        ["seat_box_RB_12", "f4r"],
+        ["seat_box_RB_12", "f4rr"],
+        ["seat_box_RB_12", "f3r"],
+
+        ["seat_box_RC_0",  "f4l"],
+        ["seat_box_RC_0",  "f4ll"],
+        ["seat_box_RC_0",  "f3l"],
+        ["seat_box_RC_8",  "f4l"],
+        ["seat_box_RC_8",  "f4ll"],
+        ["seat_box_RC_8",  "f3l"],
+        ["seat_box_RC_8",  "f4r"],
+        ["seat_box_RC_8",  "f4rr"],
+        ["seat_box_RC_8",  "f3r"],
+        ["seat_box_RC_2",  "f4r"],
+        ["seat_box_RC_2",  "f4rr"],
+        ["seat_box_RC_2",  "f3r"],
+        ["seat_box_RC_9",  "f4r"],
+        ["seat_box_RC_9",  "f4rr"],
+        ["seat_box_RC_9",  "f3r"],
+        ["seat_box_RC_12", "f4r"],
+        ["seat_box_RC_12", "f4rr"],
+        ["seat_box_RC_12", "f3r"],
+
+        ["seat_box_RD_0",  "f4l"],
+        ["seat_box_RD_0",  "f4ll"],
+        ["seat_box_RD_0",  "f3l"],
+        ["seat_box_RD_8",  "f4l"],
+        ["seat_box_RD_8",  "f4ll"],
+        ["seat_box_RD_8",  "f3l"],
+        ["seat_box_RD_8",  "f4r"],
+        ["seat_box_RD_8",  "f4rr"],
+        ["seat_box_RD_8",  "f3r"],
+        ["seat_box_RD_2",  "f4r"],
+        ["seat_box_RD_2",  "f4rr"],
+        ["seat_box_RD_2",  "f3r"],
+        ["seat_box_RD_9",  "f4r"],
+        ["seat_box_RD_9",  "f4rr"],
+        ["seat_box_RD_9",  "f3r"],
+        ["seat_box_RD_12", "f4r"],
+        ["seat_box_RD_12", "f4rr"],
+        ["seat_box_RD_12", "f3r"],
+
+        ["seat_box_RE_0",  "f4l"],
+        ["seat_box_RE_0",  "f4ll"],
+        ["seat_box_RE_0",  "f3l"],
+        ["seat_box_RE_8",  "f4l"],
+        ["seat_box_RE_8",  "f4ll"],
+        ["seat_box_RE_8",  "f3l"],
+        ["seat_box_RE_8",  "f4r"],
+        ["seat_box_RE_8",  "f4rr"],
+        ["seat_box_RE_8",  "f3r"],
+        ["seat_box_RE_2",  "f4r"],
+        ["seat_box_RE_2",  "f4rr"],
+        ["seat_box_RE_2",  "f3r"],
+        ["seat_box_RE_9",  "f4r"],
+        ["seat_box_RE_9",  "f4rr"],
+        ["seat_box_RE_9",  "f3r"],
+        ["seat_box_RE_12", "f4r"],
+        ["seat_box_RE_12", "f4rr"],
+        ["seat_box_RE_12", "f3r"],
+
+        ["seat_box_RF_0",  "f4l"],
+        ["seat_box_RF_0",  "f4ll"],
+        ["seat_box_RF_0",  "f3l"],
+        ["seat_box_RF_8",  "f4l"],
+        ["seat_box_RF_8",  "f4ll"],
+        ["seat_box_RF_8",  "f3l"],
+        ["seat_box_RF_8",  "f4r"],
+        ["seat_box_RF_8",  "f4rr"],
+        ["seat_box_RF_8",  "f3r"],
+        ["seat_box_RF_2",  "f4r"],
+        ["seat_box_RF_2",  "f4rr"],
+        ["seat_box_RF_2",  "f3r"],
+        ["seat_box_RF_9",  "f4r"],
+        ["seat_box_RF_9",  "f4rr"],
+        ["seat_box_RF_9",  "f3r"],
+        ["seat_box_RF_12", "f4r"],
+        ["seat_box_RF_12", "f4rr"],
+        ["seat_box_RF_12", "f3r"],
+
+        {"beamType":"|NORMAL", "beamLongBound":1.0, "beamShortBound":1.0},
+        {"deformLimitExpansion":1.2},
+   ],
+},
+}

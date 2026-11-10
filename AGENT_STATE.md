@@ -33,6 +33,15 @@ Research/
 ├── AGENT_STATE.md                     # Agent state & technical handoff document
 │
 ├── levels/c1/                         # Custom BeamNG level configuration & assets for Tokyo C1
+├── lua/vehicle/protocols/             # Native 10Hz UDP telemetry protocol (userStudy.lua)
+├── vehicles/bastion/                  # Bruckell Bastion live gauge hider & keybind toggle ('G' key)
+│   ├── bastion_interior.jbeam         # Hooks studyGaugeToggle controller & study_hide_gauges electrics
+│   ├── input_actions.json             # Registers 'toggle_study_gauges' vehicle action
+│   ├── inputmaps/keyboard.json        # Binds 'G' key to toggle gauges ON/OFF in real time
+│   ├── lua/controller/
+│   │   └── studyGaugeToggle.lua       # Toggles 3D Speedometer & RPM needles + digital speed flag
+│   └── gauges_screen/
+│       └── gauge_standard.js          # Dynamically hides/shows center LCD digital speed readout
 │
 ├── route_mapping/                     # Track ground-truth mapping & spatial annotation
 │   ├── mapping_lap.py                 # Centerline logging & video recorder
@@ -119,21 +128,24 @@ Sampled at a strict 10Hz synchronized loop during human driving trials:
     2. `longitudinal_throttle_profile.png` (dedicated 20.0 km throttle % profile with zone shading)
     3. `longitudinal_steering_profile.png` (dedicated 20.0 km steering angle ° profile with 0° reference line and zone shading)
     4. `speed_gap_by_zone_boxplot.png` (speed gap box plot with dynamic Y limits)
-- [x] **In-Vehicle Gauge Hiders Put on Hold:**
-  - Experimental gauge overrides cleared from BeamNG user folder.
-  - Driving POV standardized to realistic in-cabin Driver Seat POV at normal viewing angle.
-  - Vehicle selection and specific interior cluster suppression deferred to study vehicle finalization.
+- [x] **Standardized Study Vehicle & Live In-Cabin Gauge Toggle (`vehicles/bastion/`):**
+  - Standardized study vehicle: **Bruckell Bastion** (`bastion`).
+  - Preparation & Familiarization Phase documented: participants first drive for a few minutes in a separate practice location with gauges toggled **ON** (**`G`** key) to acclimate to vehicle controls and calibrate their visual perception of **80 km/h**, before toggling gauges **OFF** (**`G`** key) for the 20.0 km Tokyo C1 test session.
+  - Deployed VFS overrides into `%LOCALAPPDATA%\BeamNG\BeamNG.drive\current\vehicles\bastion\` and version-controlled in `vehicles/bastion/`:
+    - `lua/controller/studyGaugeToggle.lua`: Custom auxiliary vehicle controller that toggles `prop.hidden` on both `bastion_speedometer_needle` and `bastion_tachometer_needle` in `v.data.props` and sets `electrics.values.study_hide_gauges` (1 = hidden, 0 = visible) in real time without vehicle reload.
+    - `input_actions.json` & `inputmaps/keyboard.json`: Binds the **`G`** key to `toggle_study_gauges`.
+    - `bastion_interior.jbeam`: Loads `studyGaugeToggle`, exposes `study_hide_gauges` to the HTML gauge cluster, and enables `toggle_study_gauges`.
+    - `gauges_screen/gauge_standard.js`: Dynamically hides/shows `#speedometer` (`speedoDisplay.rootspeedo`) and `speedometerText` in sync with `data.electrics.study_hide_gauges`.
 
 ---
 
 ## 6. Immediate Next Tasks
 
-1. **Finalize Study Vehicle:**
-   - Select the participant test vehicle (make/model) for the user study and suppress its interior speedometer cluster.
-2. **Conduct Experimental Participant Sessions:**
+1. **Conduct Experimental Participant Sessions:**
+   - Spawn the **Bruckell Bastion** on the Tokyo C1 loop in Driver Cockpit POV.
    - Run: `python user_study/user_study.py --participant-id <PID> --target-speed 80.0`
    - Telemetry automatically archives into `user_study/results/`.
-3. **Analyze Participant Results:**
+2. **Analyze Participant Results:**
    - Run: `python user_study/analyze_participant.py`
    - Updates individual plots in `user_study/analysis_outputs/individual/` and cohort-averaged plots in `user_study/analysis_outputs/averaged/`.
 

@@ -1,0 +1,10 @@
+{
+  "toggle_study_gauges": {
+    "cat": "vehicle_specific",
+    "order": 1,
+    "ctx": "vlua",
+    "onDown": "if controller.getController('studyGaugeToggle') then controller.getController('studyGaugeToggle').toggleGauges() end",
+    "title": "Toggle Study Gauges (Speedo + RPM)",
+    "desc": "Toggles the speedometer needle, RPM needle, and digital speed display on/off for the speed perception study"
+  }
+}
